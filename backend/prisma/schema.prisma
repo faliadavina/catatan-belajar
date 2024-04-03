@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model catatanbelajar {
+  id_catatan    Int    @id(map: "catatanbelajar_pk") @default(autoincrement())
+  id_tag        Int?
+  id_akun       Int
+  judul_catatan String @db.VarChar
+  isi_catatan   String @db.VarChar
+  privasi       String @db.VarChar(10)
+}
+
+model tes {
+  id          BigInt @id(map: "test_pkey") @default(autoincrement())
+  test_text   String @default("")
+  test_number BigInt
+}
