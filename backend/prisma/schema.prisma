@@ -8,12 +8,13 @@ datasource db {
 }
 
 model catatanbelajar {
-  id_catatan    Int    @id(map: "catatanbelajar_pk") @default(autoincrement())
+  id_catatan    Int     @id(map: "catatanbelajar_pk") @default(autoincrement())
   id_tag        Int?
   id_akun       Int
-  judul_catatan String @db.VarChar
-  isi_catatan   String @db.VarChar
-  privasi       String @db.VarChar(10)
+  judul_catatan String  @db.VarChar
+  isi_catatan   String  @db.VarChar
+  privasi       String  @db.VarChar(10)
+  gambar        String? @db.VarChar
 }
 
 model tes {
