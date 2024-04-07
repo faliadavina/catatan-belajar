@@ -8,17 +8,21 @@ datasource db {
 }
 
 model catatanbelajar {
-  id_catatan    Int     @id(map: "catatanbelajar_pk") @default(autoincrement())
-  id_tag        Int?
+  id_catatan    Int       @id(map: "catatanbelajar_pk") @default(autoincrement())
   id_akun       Int
-  judul_catatan String  @db.VarChar
-  isi_catatan   String  @db.VarChar
-  privasi       String  @db.VarChar(10)
-  gambar        String? @db.VarChar
+  judul_catatan String
+  isi_catatan   String
+  privasi       privasi_t
+  gambar        String?
 }
 
 model tes {
   id          BigInt @id(map: "test_pkey") @default(autoincrement())
   test_text   String @default("")
   test_number BigInt
+}
+
+enum privasi_t {
+  PRIVATE
+  PUBLIC
 }

@@ -50,7 +50,6 @@ router.post('/catatanBelajar', async (req, res) => {
 
     const catatanBelajar = await prisma.catatanbelajar.create({
         data: {
-            id_tag: newCatatanData.id_tag,
             id_akun: newCatatanData.id_akun,
             judul_catatan: newCatatanData.judul_catatan,
             isi_catatan: newCatatanData.isi_catatan,
@@ -69,7 +68,7 @@ router.put('/catatanBelajar/:id', async (req, res) => {
     const catatanId = req.params.id;
     const updateCatatanData = req.body;
 
-    if (!(updateCatatanData.id_tag && updateCatatanData.judul_catatan && updateCatatanData.isi_catatan && updateCatatanData.privasi)) {
+    if (!(updateCatatanData.judul_catatan && updateCatatanData.isi_catatan && updateCatatanData.privasi)) {
         return res.status(400).send({
             error: "All fields are required"
         });
@@ -80,7 +79,6 @@ router.put('/catatanBelajar/:id', async (req, res) => {
             id_catatan: parseInt(catatanId),
         },
         data: {
-            id_tag: updateCatatanData.id_tag,
             judul_catatan: updateCatatanData.judul_catatan,
             isi_catatan: updateCatatanData.isi_catatan,
             privasi: updateCatatanData.privasi,
@@ -103,7 +101,6 @@ router.patch('/catatanBelajar/:id', async (req, res) => {
             id_catatan: parseInt(catatanId),
         },
         data: {
-            id_tag: updateCatatanData.id_tag,
             judul_catatan: updateCatatanData.judul_catatan,
             isi_catatan: updateCatatanData.isi_catatan,
             privasi: updateCatatanData.privasi,
