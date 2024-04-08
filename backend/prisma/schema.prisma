@@ -8,7 +8,7 @@ datasource db {
 }
 
 model catatanbelajar {
-  id_catatan    Int       @id(map: "catatanbelajar_pk") @default(autoincrement())
+  id            Int       @id(map: "catatanbelajar_pk") @default(autoincrement())
   id_akun       Int
   judul_catatan String
   isi_catatan   String
@@ -20,6 +20,11 @@ model tes {
   id          BigInt @id(map: "test_pkey") @default(autoincrement())
   test_text   String @default("")
   test_number BigInt
+}
+
+model tag {
+  id       Int     @id @default(autoincrement())
+  nama_tag String? @unique
 }
 
 enum privasi_t {

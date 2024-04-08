@@ -1,40 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Flex, Spacer, Text, Button, useColorModeValue, Input, InputGroup, InputRightElement, Grid, GridItem, Container } from "@chakra-ui/react";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import { FiPlusSquare } from "react-icons/fi";
 import { SearchIcon, LockIcon, EditIcon, DownloadIcon } from "@chakra-ui/icons";
 import { Image, HStack, Stack, Badge } from '@chakra-ui/react'
+import axios from "axios";
 
 const Catatan = () => {
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [catatanList, setCatatanList] = useState([]);
 
-    const handleOpenModal = () => {
-      setIsModalOpen(true);
-    };
-  
-    const handleCloseModal = () => {
-      setIsModalOpen(false);
-    };
+  useEffect(() => {
+      async function fetchData() {
+          try {
+              const response = await axios.get('http://localhost:3030/api/catatanBelajar/catatanBelajars');
+              setCatatanList(response.data);
+              console.log(response.data);
+          } catch (error) {
+              console.error('Error fetching data: ', error);
+          }
+      }
 
-  const data = [
-    {
-      id_catatan: 1,
-      judul_catatan: 'Pengembangan Web',
-      isi_catatan: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ac lacinia sapien, sed dictum metus. Suspendisse aliquet, tortor at euismod pharetra, eros dolor iaculis justo, et pulvinar orci massa et turpis. '
-    },
-    {
-      id_catatan: 2,
-      judul_catatan: 'Pengolahan Citra Digital',
-      isi_catatan: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ac lacinia sapien, sed dictum metus. Suspendisse aliquet, tortor at euismod pharetra, eros dolor iaculis justo, et pulvinar orci massa et turpis. '
-    },
-    {
-      id_catatan: 3,
-      judul_catatan: 'Sistem Terdistribusi',
-      isi_catatan: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ac lacinia sapien, sed dictum metus. Suspendisse aliquet, tortor at euismod pharetra, eros dolor iaculis justo, et pulvinar orci massa et turpis. '
-    },
-  ];
+      fetchData();
+  }, []); 
 
   const textColor = useColorModeValue("gray.700", "white");
 
@@ -43,29 +32,35 @@ const Catatan = () => {
         <Text as="h1" fontSize="3xl" fontWeight="bold" mb="5" color={textColor}>Catatan Belajar</Text>
         {/* <Button colorScheme="teal" size="sm" leftIcon={<FiPlusSquare />} rounded="md" width="100px" fontWeight="normal"> Tambah </Button> */}
         <Flex minWidth='max-content' alignItems='center' gap='315'>
-            <Button colorScheme="teal" size="sm" leftIcon={<FiPlusSquare />} rounded="md" fontWeight="normal" onClick={() => setIsModalOpen(true)}>
+            <Button colorScheme="teal" size="sm" leftIcon={<FiPlusSquare />} rounded="md" fontWeight="normal">
                 Tambah
             </Button>
             <Spacer />
             <SearchBar />
         </Flex>
-        <Container maxW="5xl" bg="gray.100" mt={5} rounded={5}>
-            <Grid gap={4} templateColumns='repeat(3, minmax(200px, 1fr))'>
-                {data.map((catatan) => (
-                <GridItem key={catatan.id_catatan} colSpan={1}>
-                    <Card position="relative" overflowX={{ sm: "scroll", xl: "hidden" }} my={4}>
+        <Container maxW="5xl" bg="gray.100" mt={5} rounded={5} p={4}>
+            <Grid gap={4} rowGap={4} templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}>
+                {catatanList.map((catatan) => (
+                <GridItem key={catatan.id} colSpan={1}>
+                    <Card position="relative" minHeight="260px" maxHeight="260px">
                     <CardHeader p="7px 0px 7px 0px" position="relative">
                         <Flex justifyContent="space-between" alignItems="center">
                             <Text fontSize="lg" color={textColor} fontWeight="bold" pb=".5rem">
                                 {catatan.judul_catatan}
                             </Text>
-                            <LockIcon color="gray.500" w={4} h={4} position="absolute" top={2} right={2} />
+                            {catatan.privasi === 'PRIVATE' && (
+                                <LockIcon color="gray.500" w={4} h={4} position="absolute" top={2} right={2} />
+                            )}
                         </Flex>
                     </CardHeader>
-                    <Flex direction="column" pb=".5rem">
+                    <Flex direction="column" pb=".5rem" overflowY="hidden" height={100}>
+                    {catatan.gambar ? (
+                        <Image src={catatan.gambar} alt="Gambar Catatan" />
+                    ) : (
                         <Text fontSize="sm" color={textColor}>
-                        {catatan.isi_catatan}
+                            {catatan.isi_catatan}
                         </Text>
+                    )}
                     </Flex>
                     <HStack spacing='4px' mt={5} pb=".5rem">
                         <Image
