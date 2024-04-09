@@ -12,7 +12,7 @@ router.get('/catatanBelajar/:id', async (req, res) => {
     const catatanId = req.params.id;
     const catatanBelajar = await prisma.catatanbelajar.findUnique({
         where: {
-            id_catatan: parseInt(catatanId),
+            id: parseInt(catatanId),
         },
     });
 
@@ -76,7 +76,7 @@ router.put('/catatanBelajar/:id', async (req, res) => {
 
     const catatanbelajar = await prisma.catatanbelajar.update({
         where: {
-            id_catatan: parseInt(catatanId),
+            id: parseInt(catatanId),
         },
         data: {
             judul_catatan: updateCatatanData.judul_catatan,
@@ -98,7 +98,7 @@ router.patch('/catatanBelajar/:id', async (req, res) => {
 
     const catatanbelajar = await prisma.catatanbelajar.update({
         where: {
-            id_catatan: parseInt(catatanId),
+            id: parseInt(catatanId),
         },
         data: {
             judul_catatan: updateCatatanData.judul_catatan,
@@ -119,7 +119,7 @@ router.delete('/catatanBelajar/:id', async (req, res) => {
 
     await prisma.catatanbelajar.delete({
         where: {
-            id_catatan: parseInt(catatanId),
+            id: parseInt(catatanId),
         },
     });
 

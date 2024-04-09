@@ -7,7 +7,7 @@ export default function Catatan_Belajar() {
 
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "75px" }}>
-        <Grid templateColumns='repeat(3, 1fr)' gap={6}>
+        <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}>
             <Catatan />
         </Grid>
     </Flex>
