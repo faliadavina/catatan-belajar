@@ -9,23 +9,44 @@ import axios from "axios";
 
 const Catatan = () => {
 
-  const [catatanList, setCatatanList] = useState([]);
-
-  useEffect(() => {
-      async function fetchData() {
-          try {
-              const response = await axios.get('http://localhost:3030/api/catatanBelajar/catatanBelajars');
-              setCatatanList(response.data);
-              console.log(response.data);
-          } catch (error) {
-              console.error('Error fetching data: ', error);
-          }
-      }
-
-      fetchData();
-  }, []); 
-
-  const textColor = useColorModeValue("gray.700", "white");
+    const [catatanList, setCatatanList] = useState([]);
+    const [loggedInAccountId] = useState(3); // ID akun yang sedang login
+  
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:3030/api/catatanBelajar/catatanBelajars');
+            // Filter catatan berdasarkan id akun yang sedang login atau privasi publik
+            const filteredCatatanList = response.data.filter(catatan => catatan.id_akun === loggedInAccountId || catatan.privasi === "PUBLIC");
+            setCatatanList(filteredCatatanList);
+            console.log(filteredCatatanList);
+        } catch (error) {
+            console.error('Error fetching data: ', error);
+        }
+    };
+  
+    useEffect(() => {
+        fetchData(loggedInAccountId);
+    }, []); 
+  
+    const searchCatatanBelajar = async (keyword) => {
+        try {
+            const response = await axios.get(`http://localhost:3030/api/catatanBelajar/catatanBelajar?keyword=${keyword}`);
+            setCatatanList(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error fetching data: ', error);
+        }
+    };
+  
+    const handleSearch = async (keyword) => {
+        if (keyword.trim() !== "") {
+            await searchCatatanBelajar(keyword);
+        } else {
+            fetchData();
+        }
+    };
+  
+    const textColor = useColorModeValue("gray.700", "white");
 
   return (
     <Flex direction="column" padding="20px">
@@ -36,7 +57,7 @@ const Catatan = () => {
                 Tambah
             </Button>
             <Spacer />
-            <SearchBar />
+            <SearchBar onChange={(e) => handleSearch(e.target.value)} />
         </Flex>
         <Container maxW="5xl" bg="gray.100" mt={5} rounded={5} p={4}>
             <Grid gap={4} rowGap={4} templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}>
