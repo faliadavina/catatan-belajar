@@ -8,12 +8,13 @@ datasource db {
 }
 
 model catatanbelajar {
-  id            Int       @id(map: "catatanbelajar_pk") @default(autoincrement())
-  id_akun       Int
-  judul_catatan String
-  isi_catatan   String
-  privasi       privasi_t
-  gambar        String?
+  id                 Int                  @id(map: "catatanbelajar_pk") @default(autoincrement())
+  id_akun            Int
+  judul_catatan      String
+  isi_catatan        String
+  privasi            privasi_t
+  gambar             String?
+  catatanbelajar_tag catatanbelajar_tag[]
 }
 
 model tes {
@@ -23,8 +24,19 @@ model tes {
 }
 
 model tag {
-  id       Int     @id @default(autoincrement())
-  nama_tag String? @unique
+  id                 Int                  @id @default(autoincrement())
+  nama_tag           String?              @unique
+  catatanbelajar_tag catatanbelajar_tag[]
+}
+
+model catatanbelajar_tag {
+  id                Int            @id @default(autoincrement())
+  id_catatanbelajar Int
+  id_tag            Int
+  catatanbelajar    catatanbelajar @relation(fields: [id_catatanbelajar], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tag               tag            @relation(fields: [id_tag], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([id_catatanbelajar, id_tag], map: "unique_tag_per_catatan")
 }
 
 enum privasi_t {
