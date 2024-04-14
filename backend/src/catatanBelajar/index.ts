@@ -31,12 +31,42 @@ router.get('/catatanBelajar/:id', async (req, res) => {
 
 router.get('/catatanBelajar', async (req, res) => {
     const keyword = req.query.keyword?.toString();
-    const catatanBelajar = await prisma.catatanbelajar.findMany({
+
+    // Mencari ID tag berdasarkan nama tag yang diberikan
+    const tagIds = await prisma.tag.findMany({
         where: {
-            judul_catatan:{
+            nama_tag: {
                 contains: keyword,
                 mode: 'insensitive'
             }
+        },
+        select: {
+            id: true
+        }
+    }).then(tags => tags.map(tag => tag.id));
+
+    // Mencari catatan belajar yang memiliki tag dengan ID tersebut
+    const catatanBelajar = await prisma.catatanbelajar.findMany({
+        where: {
+            OR: [
+                {
+                    judul_catatan: {
+                        contains: keyword,
+                        mode: 'insensitive'
+                    }
+                },
+                {
+                    catatanbelajar_tag: {
+                        some: {
+                          tag: {
+                            id: {
+                              in: tagIds
+                            }
+                          }
+                        }
+                      }
+                }
+            ]
         },
     });
 
@@ -220,7 +250,10 @@ router.get('/catatanBelajar/:id/download', async (req, res) => {
 
     // Add text content to PDF
     doc.fontSize(20).text(`${catatanBelajar.judul_catatan}`, { align: 'center' });
-    doc.fontSize(14).text(`${catatanBelajar.isi_catatan}`);
+    doc.fontSize(12).text(`${catatanBelajar.isi_catatan}`,{ align: 'left' , width: 500});
+
+    // Get current vertical position
+    const yPos = doc.y;
 
     // Download and add image to PDF
     const imagePath = `./public/tempImages/temp_image_${catatanId}.jpg`;
@@ -234,7 +267,14 @@ router.get('/catatanBelajar/:id/download', async (req, res) => {
     response.data.pipe(writer);
 
     writer.on('finish', () => {
-        doc.image(imagePath);
+        // Calculate x position to center the image
+        const imageWidth = 200; // Adjust this value based on your image size
+        const xPos = (doc.page.width - imageWidth) / 2;
+        
+        // Move to the calculated position
+        doc.y = yPos + 20; // Add some padding
+        doc.image(imagePath, xPos, doc.y, { width: imageWidth });
+
         doc.end();
         res.sendFile(pdfPath);
     });
@@ -243,6 +283,7 @@ router.get('/catatanBelajar/:id/download', async (req, res) => {
         console.error('Failed to download image:', err);
         res.status(500).send('Failed to download image');
     });
+
 });
 
 
