@@ -1,7 +1,11 @@
 import express from "express";
 import prisma from "../prisma";
+import PDFDocument from 'pdfkit';
+import fs from "fs";
 
 const router = express.Router();
+const axios = require('axios');
+const path = require('path');
 
 router.get('/catatanBelajars', async (req, res) => {
     const catatanBelajars = await prisma.catatanbelajar.findMany();
@@ -68,22 +72,30 @@ router.post('/catatanBelajar', async (req, res) => {
     const newCatatanData = req.body;
     const tagNama = newCatatanData.nama_tag;
 
-    let tagId;
-    const existingTag = await prisma.tag.findUnique({
-        where: {
-            nama_tag: tagNama
-        }
-    });
-
-    if (existingTag) {
-        tagId = existingTag.id;
-    } else {
-        const newTag = await prisma.tag.create({
-            data: {
-                nama_tag: tagNama
+    let tagIds = [];
+    for (const tagName of tagNama) {
+        let tagId;
+        const existingTag = await prisma.tag.findFirst({
+            where: {
+                nama_tag: {
+                    equals: tagName,
+                    mode: "insensitive" // Mode insensitive untuk mengabaikan perbedaan huruf besar kecil
+                }
             }
         });
-        tagId = newTag.id;
+
+        if (existingTag) {
+            tagId = existingTag.id;
+        } else {
+            const newTag = await prisma.tag.create({
+                data: {
+                    nama_tag: tagName
+                }
+            });
+            tagId = newTag.id;
+        }
+
+        tagIds.push(tagId);
     }
 
     const catatanBelajar = await prisma.catatanbelajar.create({
@@ -94,14 +106,14 @@ router.post('/catatanBelajar', async (req, res) => {
             privasi: newCatatanData.privasi,
             gambar: newCatatanData.gambar,
             catatanbelajar_tag: { // Gunakan nama relasi yang sesuai dengan tabel junction
-            create: {
-                tag: {
-                    connect: {
-                        id: tagId
+                create: tagIds.map(tagId => ({
+                    tag: {
+                        connect: {
+                            id: tagId
+                        }
                     }
-                }
+                }))
             }
-        }
         },
     });
 
@@ -186,6 +198,51 @@ router.delete('/catatanBelajar/:id', async (req, res) => {
     });
 
     res.send("Catatan Belajar deleted successfully");
+});
+
+router.get('/catatanBelajar/:id/download', async (req, res) => {
+    const catatanId = req.params.id;
+    const catatanBelajar = await prisma.catatanbelajar.findUnique({
+        where: {
+            id: parseInt(catatanId),
+        },
+    });
+
+    if (!catatanBelajar) {
+        return res.status(404).send({
+            error: "Catatan Belajar not found"
+        });
+    }
+
+    const pdfPath = path.resolve(__dirname, `../../public/downloads/catatan_belajar_${catatanId}.pdf`);
+    const doc = new PDFDocument();
+    doc.pipe(fs.createWriteStream(pdfPath));
+
+    // Add text content to PDF
+    doc.fontSize(20).text(`${catatanBelajar.judul_catatan}`, { align: 'center' });
+    doc.fontSize(14).text(`${catatanBelajar.isi_catatan}`);
+
+    // Download and add image to PDF
+    const imagePath = `./public/tempImages/temp_image_${catatanId}.jpg`;
+    const writer = fs.createWriteStream(imagePath);
+    const response = await axios({
+        url: catatanBelajar.gambar,
+        method: 'GET',
+        responseType: 'stream'
+    });
+
+    response.data.pipe(writer);
+
+    writer.on('finish', () => {
+        doc.image(imagePath);
+        doc.end();
+        res.sendFile(pdfPath);
+    });
+
+    writer.on('error', (err) => {
+        console.error('Failed to download image:', err);
+        res.status(500).send('Failed to download image');
+    });
 });
 
 
