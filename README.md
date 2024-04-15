@@ -9,6 +9,10 @@
     "nama_tag":"Proyek"
 }
 ```
+buat tag bisa jadi gini kalau isinya lebih dari satu tag
+```
+"nama_tag":["Proyek","Manajemen Proyek"]
+```
 
 List endpoint
 1. Post/create
