@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import './App.css'
-import Chat from './components/custom/Notepad'
 import CardCatatan from './components/custom/CardCatatan';
+import Notepad from './components/custom/Notepad';
+import { Button } from './components/ui/button';
 
 function App() {
   const [isNotepadOpen, setIsNotepadOpen] = useState<boolean>(false);
@@ -10,18 +11,12 @@ function App() {
     setIsNotepadOpen(!isNotepadOpen);
   };
 
-  const elementsFrom = Array.from({ length: 40 }, (_, i) => (
-    <CardCatatan/>
-  ));
-
   return (
     <div className="App">
-      <button onClick={toggleNotepad}>
-        {isNotepadOpen ? 'Close' : 'Open'}
-      </button>
-      {isNotepadOpen && <Chat />}
-
-      {elementsFrom}
+      <Button onClick={toggleNotepad}>
+        Tambah
+      </Button>
+      <Notepad isOpen={isNotepadOpen} onClose={toggleNotepad} />
     </div>
   );
 }
