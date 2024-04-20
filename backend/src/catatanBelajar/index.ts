@@ -156,24 +156,33 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const catatanId = req.params.id;
     const updateCatatanData = req.body;
-    const tagNama = updateCatatanData.nama_tag;
+    const tagNamas = updateCatatanData.nama_tag; // Ubah nama variabel agar sesuai dengan tipe data array
 
-    let tagId;
-    const existingTag = await prisma.tag.findUnique({
-        where: {
-            nama_tag: tagNama
-        }
-    });
+    // Inisialisasi array untuk menyimpan ID tag baru
+    const newTagIds = [];
 
-    if (existingTag) {
-        tagId = existingTag.id;
-    } else {
-        const newTag = await prisma.tag.create({
-            data: {
+    // Proses setiap nama tag
+    for (const tagNama of tagNamas) {
+        let tagId;
+        const existingTag = await prisma.tag.findUnique({
+            where: {
                 nama_tag: tagNama
             }
         });
-        tagId = newTag.id;
+
+        if (existingTag) {
+            tagId = existingTag.id;
+        } else {
+            const newTag = await prisma.tag.create({
+                data: {
+                    nama_tag: tagNama
+                }
+            });
+            tagId = newTag.id;
+        }
+
+        // Tambahkan ID tag baru ke dalam array
+        newTagIds.push(tagId);
     }
 
     // Hapus semua tag lama dari catatan belajar
@@ -184,12 +193,14 @@ router.put('/:id', async (req, res) => {
     });
 
     // Tambahkan tag baru ke catatan belajar
-    await prisma.catatanbelajar_tag.create({
-        data: {
-            id_catatanbelajar: parseInt(catatanId),
-            id_tag: tagId
-        }
-    });
+    for (const tagId of newTagIds) {
+        await prisma.catatanbelajar_tag.create({
+            data: {
+                id_catatanbelajar: parseInt(catatanId),
+                id_tag: tagId
+            }
+        });
+    }
 
     const updatedCatatanBelajar = await prisma.catatanbelajar.update({
         where: {
