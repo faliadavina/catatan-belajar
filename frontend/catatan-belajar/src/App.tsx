@@ -54,6 +54,7 @@ function App() {
           {rows}
         </div>
       </div>
+      <Notepad isOpen={isNotepadOpen} onClose={toggleNotepad} />
     </div>
   );
 }

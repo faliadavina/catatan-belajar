@@ -7,12 +7,12 @@ const router = express.Router();
 const axios = require('axios');
 const path = require('path');
 
-router.get('/catatanBelajars', async (req, res) => {
-    const catatanBelajars = await prisma.catatanbelajar.findMany();
-    res.send(catatanBelajars);
-});
+// router.get('/catatanBelajars', async (req, res) => {
+//     const catatanBelajars = await prisma.catatanbelajar.findMany();
+//     res.send(catatanBelajars);
+// });
 
-router.get('/catatanBelajar/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
     const catatanId = req.params.id;
     const catatanBelajar = await prisma.catatanbelajar.findUnique({
         where: {
@@ -29,7 +29,7 @@ router.get('/catatanBelajar/:id', async (req, res) => {
     res.send(catatanBelajar);
 });
 
-router.get('/catatanBelajar', async (req, res) => {
+router.get('/', async (req, res) => {
     const keyword = req.query.keyword?.toString();
 
     // Mencari ID tag berdasarkan nama tag yang diberikan
@@ -98,7 +98,7 @@ router.get('/catatanBelajar', async (req, res) => {
 //     });
 // });
 
-router.post('/catatanBelajar', async (req, res) => {
+router.post('/', async (req, res) => {
     const newCatatanData = req.body;
     const tagNama = newCatatanData.nama_tag;
 
@@ -153,7 +153,7 @@ router.post('/catatanBelajar', async (req, res) => {
     });
 });
 
-router.put('/catatanBelajar/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
     const catatanId = req.params.id;
     const updateCatatanData = req.body;
     const tagNama = updateCatatanData.nama_tag;
@@ -210,7 +210,7 @@ router.put('/catatanBelajar/:id', async (req, res) => {
 });
 
 
-router.delete('/catatanBelajar/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     const catatanId = req.params.id;
 
     // Hapus relasi di tabel catatanbelajar_tag terlebih dahulu
