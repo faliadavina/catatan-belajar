@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faFileArrowDown, faLock } from "@fortawesome/free-solid-svg-icons";
+import { Button } from "@/components/ui/button"
+import { PenSquare } from "lucide-react"
 import parse from "html-react-parser";
 
 const MAX_LENGTH = 100; // Jumlah maksimum karakter untuk ditampilkan
@@ -48,14 +50,20 @@ const CardCatatan: React.FC<{ judul: string; isi: string }> = ({ judul, isi }) =
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-      <Badge className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">ini tag</Badge>
+        <Badge className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">ini tag</Badge>
         <div>
-          <Button className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]" variant="ghost">
+            <Button
+              className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
+              variant="ghost"
+            >
             <FontAwesomeIcon icon={faPenToSquare} color="#38B0AB" />
-          </Button>
-          <Button className="mx-1 w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]" variant="ghost">
+            </Button>
+            <Button
+              className="mx-1 w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
+              variant="ghost"
+            >
             <FontAwesomeIcon icon={faFileArrowDown} color="#38B0AB" />
-          </Button>
+            </Button>
         </div>
       </CardFooter>
     </Card>
