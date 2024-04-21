@@ -3,9 +3,10 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faFileArrowDown, faLock } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "@/components/ui/button"
+import { PenSquare } from "lucide-react"
 import parse from "html-react-parser";
 
 const MAX_LENGTH = 100; // Jumlah maksimum karakter untuk ditampilkan
