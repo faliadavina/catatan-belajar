@@ -53,33 +53,37 @@ function App() {
       console.error("Failed to search data:", error);
     }
   };
+
+  useEffect(() => {
+    if (searchKeyword === "") {
+      fetchData(); // Fetch data tanpa keyword jika searchKeyword kosong
+    }
+  }, []);
+  
+  useEffect(() => {
+    if (searchKeyword !== "") {
+      fetchData(searchKeyword);
+    } else {
+      fetchData(); // Panggil fetchData tanpa keyword jika searchKeyword kosong
+    }
+  }, [searchKeyword]);
+  
+
   // Fungsi untuk melakukan fetch data, dengan parameter opsional keyword untuk pencarian
   const fetchData = async (keyword?: string) => {
     try {
       let url = "http://localhost:3030/api/catatanbelajar";
       if (keyword) {
         url += `?keyword=${keyword}`;
-        const response = await axios.get<CatatanData[]>(url);
-        setCatatanBelajar(response.data);
       }
+      const response = await axios.get<CatatanData[]>(url);
+      setCatatanBelajar(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
+      setCatatanBelajar([]); // Set catatanBelajar ke array kosong jika gagal fetch data
     }
-  };
+  };  
 
-  // Memanggil fetchData saat komponen pertama kali di-render
-  useEffect(() => {
-    fetchData();
-  }, []);
-  // Memperbarui useEffect untuk melakukan fetch data saat searchKeyword berubah
-  useEffect(() => {
-    if (searchKeyword !== "") {
-      fetchData(searchKeyword);
-    } else {
-      // Jika searchKeyword kosong, tampilkan semua catatan belajar
-      fetchData();
-    }
-  }, [searchKeyword]);
   // Menampilkan catatan belajar
   let cards;
   if (catatanBelajar.length > 0) {
