@@ -79,25 +79,6 @@ router.get('/', async (req, res) => {
     res.send(catatanBelajar);
 });
 
-// router.post('/catatanBelajar', async (req, res) => {
-//     const newCatatanData = req.body;
-
-//     const catatanBelajar = await prisma.catatanbelajar.create({
-//         data: {
-//             id_akun: newCatatanData.id_akun,
-//             judul_catatan: newCatatanData.judul_catatan,
-//             isi_catatan: newCatatanData.isi_catatan,
-//             privasi: newCatatanData.privasi,
-//             gambar: newCatatanData.gambar
-//         },
-//     });
-
-//     res.send({
-//         data: catatanBelajar,
-//         message: "Create Catatan Belajar successfully"
-//     });
-// });
-
 router.post('/', async (req, res) => {
     const newCatatanData = req.body;
     const tagNama = newCatatanData.nama_tag;
