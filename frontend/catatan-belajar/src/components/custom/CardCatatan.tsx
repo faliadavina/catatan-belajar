@@ -16,7 +16,6 @@ import {
   faFileArrowDown,
   faLock,
 } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "@/components/ui/button";
 import parse from "html-react-parser";
 import { CatatanData, MethodType } from "@/lib/types";
 
