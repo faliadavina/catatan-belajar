@@ -8,16 +8,8 @@ import { Input } from "../ui/input";
 import { CatatanData, MethodType } from "@/lib/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEllipsisVertical,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -184,7 +176,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
-                        className="px-3 hover:none focus:outline-none font-bold"
+                        className="px-3 hover:none focus:outline-none font-bold border-2 border-red-600"
                         onClick={() => handleMethodChange("DELETE")}
                         variant="ghost"
                       >
@@ -201,7 +193,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
 
             <Button
               type="submit"
-              className={`bg-[#38B0AB] hover:bg-[#22918D] text-white px-4 py-2 rounded-md ml-2 ${
+              className={`bg-[#38B0AB] hover:bg-[#22918D] text-white ml-2 ${
                 !isi.trim() ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={!isi.trim()}
