@@ -92,7 +92,7 @@ function App() {
         key={catatan.id}
         className="w-full md:w-1/2 lg:w-1/3 mb-4 md:mb-0 pb-3"
       >
-        <CardCatatan judul={catatan.judul_catatan} isi={catatan.isi_catatan} />
+        <CardCatatan catatan={catatan} toggleNotepad={toggleNotepad}/>
       </div>
     ));
   } else {

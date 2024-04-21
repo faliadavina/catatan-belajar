@@ -1,13 +1,23 @@
 import React from "react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faFileArrowDown, faLock } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "@/components/ui/button"
-import { PenSquare } from "lucide-react"
+import {
+  faPenToSquare,
+  faFileArrowDown,
+  faLock,
+} from "@fortawesome/free-solid-svg-icons";
+import { Button } from "@/components/ui/button";
 import parse from "html-react-parser";
+import { CatatanData, MethodType } from "@/lib/types";
 
 const MAX_LENGTH = 100; // Jumlah maksimum karakter untuk ditampilkan
 
@@ -19,25 +29,39 @@ const truncateText = (text: string, maxLength: number) => {
   return parse(truncatedText);
 };
 
-const CardCatatan: React.FC<{ judul: string; isi: string }> = ({ judul, isi }) => {
-  const truncatedIsi = truncateText(isi, MAX_LENGTH);
+const CardCatatan: React.FC<{
+  catatan: CatatanData;
+  toggleNotepad: (newMethod?: MethodType, newCatatanData?: CatatanData) => void;
+}> = ({ catatan, toggleNotepad }) => {
+  const truncatedIsi = truncateText(catatan.isi_catatan, MAX_LENGTH);
 
   // Buat elemen placeholder untuk menjaga ukuran card tetap konstan
-  const placeholder = Array.from({ length: MAX_LENGTH - isi.length }).map((_, index) => (
-    <span key={index} className="invisible">x</span>
-  ));
+  const placeholder = Array.from({ length: MAX_LENGTH - catatan.isi_catatan.length }).map(
+    (_, index) => (
+      <span key={index} className="invisible">
+        x
+      </span>
+    )
+  );
 
   return (
     <Card className="w-[300px]">
       <CardHeader>
-        <CardTitle className="text-left text-lg font-bold flex justify-between">{judul}
-          <FontAwesomeIcon icon={faLock} className="text-[#38B0AB]"/>
+        <CardTitle className="text-left text-lg font-bold flex justify-between">
+          {catatan.judul_catatan}
+          <FontAwesomeIcon icon={faLock} className="text-[#38B0AB]" />
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid w-full items-center gap-4">
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="name" className="text-left font-normal overflow-hidden h-[50px]">{truncatedIsi}{placeholder}</Label>
+            <Label
+              htmlFor="name"
+              className="text-left font-normal overflow-hidden h-[50px]"
+            >
+              {truncatedIsi}
+              {placeholder}
+            </Label>
           </div>
           <div className="flex flex-col md:flex-row items-center">
             <Avatar>
@@ -49,20 +73,23 @@ const CardCatatan: React.FC<{ judul: string; isi: string }> = ({ judul, isi }) =
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Badge className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">ini tag</Badge>
+        <Badge className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">
+          ini tag
+        </Badge>
         <div>
-            <Button
-              className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
-              variant="ghost"
-            >
+          <Button
+            className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
+            variant="ghost"
+            onClick={() => toggleNotepad("PUT", catatan)}
+          >
             <FontAwesomeIcon icon={faPenToSquare} color="#38B0AB" />
-            </Button>
-            <Button
-              className="mx-1 w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
-              variant="ghost"
-            >
+          </Button>
+          <Button
+            className="mx-1 w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
+            variant="ghost"
+          >
             <FontAwesomeIcon icon={faFileArrowDown} color="#38B0AB" />
-            </Button>
+          </Button>
         </div>
       </CardFooter>
     </Card>

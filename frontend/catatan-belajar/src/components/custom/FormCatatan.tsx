@@ -14,7 +14,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import axios from "axios";
 
 interface FormCatatanProps {
   catatanData: CatatanData;
@@ -53,14 +52,6 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   const handleMethodChange = (newMethod: MethodType) => {
     method = newMethod;
   };
-
-  // useEffect(() => {
-  //   if (privasi) {
-  //     setPrivasi("PUBLIC");
-  //   } else {
-  //     setPrivasi("PRIVATE");
-  //   }
-  // }, [privasi]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
