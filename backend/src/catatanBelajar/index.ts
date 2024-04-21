@@ -7,10 +7,10 @@ const router = express.Router();
 const axios = require('axios');
 const path = require('path');
 
-// router.get('/catatanBelajars', async (req, res) => {
-//     const catatanBelajars = await prisma.catatanbelajar.findMany();
-//     res.send(catatanBelajars);
-// });
+router.get('/catatanBelajars', async (req, res) => {
+    const catatanBelajars = await prisma.catatanbelajar.findMany();
+    res.send(catatanBelajars);
+});
 
 router.get('/:id', async (req, res) => {
     const catatanId = req.params.id;
