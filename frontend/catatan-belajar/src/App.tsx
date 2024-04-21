@@ -42,47 +42,43 @@ function App() {
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchKeyword(e.target.value);
   };
+  
+  useEffect(() => {
+    fetchData(); // Fetch data tanpa keyword saat pertama kali render
+  }, []);
+  
+  useEffect(() => {
+    if (searchKeyword !== "") {
+      searchCatatan(searchKeyword); // Panggil searchCatatan jika searchKeyword tidak kosong
+    } else {
+      fetchData(); // Panggil fetchData jika searchKeyword kosong
+    }
+  }, [searchKeyword]);
+  
   // Fungsi untuk melakukan pencarian
-  const searchCatatan = async () => {
+  const searchCatatan = async (keyword: string) => {
     try {
       const response = await axios.get<CatatanData[]>(
-        `http://localhost:3030/api/catatanbelajar?keyword=${searchKeyword}`
+        `http://localhost:3030/api/catatanBelajar?keyword=${keyword}`
       );
       setCatatanBelajar(response.data);
     } catch (error) {
       console.error("Failed to search data:", error);
     }
   };
-
-  useEffect(() => {
-    if (searchKeyword === "") {
-      fetchData(); // Fetch data tanpa keyword jika searchKeyword kosong
-    }
-  }, []);
   
-  useEffect(() => {
-    if (searchKeyword !== "") {
-      fetchData(searchKeyword);
-    } else {
-      fetchData(); // Panggil fetchData tanpa keyword jika searchKeyword kosong
-    }
-  }, [searchKeyword]);
-  
-
-  // Fungsi untuk melakukan fetch data, dengan parameter opsional keyword untuk pencarian
-  const fetchData = async (keyword?: string) => {
+  // Fungsi untuk melakukan fetch data
+  const fetchData = async () => {
     try {
-      let url = "http://localhost:3030/api/catatanbelajar";
-      if (keyword) {
-        url += `?keyword=${keyword}`;
-      }
-      const response = await axios.get<CatatanData[]>(url);
+      const response = await axios.get<CatatanData[]>(
+        "http://localhost:3030/api/catatanBelajar/catatanBelajars"
+      );
       setCatatanBelajar(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
-      setCatatanBelajar([]); // Set catatanBelajar ke array kosong jika gagal fetch data
     }
-  };  
+  };
+  
 
   // Menampilkan catatan belajar
   let cards;
@@ -129,7 +125,7 @@ function App() {
         </div>
       </div>
       <div className="container mx-auto mt-4 rounded-xl bg-[#F5F7F9]">
-        <div className="pt-2 pb-4 flex flex-wrap">{cards}</div>
+        <div className="pt-4 pb-4 flex flex-wrap">{cards}</div>
         <Notepad
           isOpen={isNotepadOpen}
           onClose={toggleNotepad}
