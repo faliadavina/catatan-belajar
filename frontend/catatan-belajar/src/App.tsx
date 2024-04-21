@@ -37,7 +37,7 @@ function App() {
   };
 
   // Membuat array dengan jumlah elemen yang ditentukan
-  const elements = Array.from({ length: 9 }, (_, i) => i + 1);
+  const elements = Array.from({ length: 40 }, (_, i) => i + 1);
 
   // Membagi array menjadi array dengan 3 elemen per baris
   const chunks = (arr: number[], size: number) => {

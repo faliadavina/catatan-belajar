@@ -18,6 +18,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface FormCatatanProps {
   catatanData: CatatanData;
@@ -174,38 +180,22 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
           <div>
             {method == "PUT" && (
               <>
-                {/* <Button
-                  className="px-3 hover:none focus:outline-none font-bold"
-                  onClick={() => handleMethodChange("DELETE")}
-                  variant="destructive"
-                >
-                  <FontAwesomeIcon icon={faTrashCan} className="mr-2" />
-                  Hapus Catatan
-                </Button> */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost">
-                      <FontAwesomeIcon icon={faEllipsisVertical} />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-40">
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          handleMethodChange("DELETE");
-                          handleSubmit(e);
-                        }}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className="px-3 hover:none focus:outline-none font-bold"
+                        onClick={() => handleMethodChange("DELETE")}
+                        variant="ghost"
                       >
-                        <FontAwesomeIcon
-                          icon={faTrashCan}
-                          className="mr-2"
-                          color="red"
-                        />
-                        <span>Hapus catatan</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                        <FontAwesomeIcon icon={faTrashCan} color="red" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Hapus Catatan</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </>
             )}
 
