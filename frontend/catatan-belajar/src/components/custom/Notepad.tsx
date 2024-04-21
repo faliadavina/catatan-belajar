@@ -26,11 +26,11 @@ const Notepad: React.FC<NotepadProps> = ({
   const notepadRef = useRef<HTMLDivElement>(null);
   const [isMinimized, setIsMinimized] = useState(false);
   const [formCatatanData, setFormCatatanData] = useState<CatatanData>({
-    judul: "",
-    isi: "",
-    isPublic: false,
+    judul_catatan: "",
+    isi_catatan: "",
+    privasi: "PRIVATE",
     gambar: "",
-    tag: [],
+    nama_tag: [],
   });
 
   useEffect(() => {
@@ -42,11 +42,11 @@ const Notepad: React.FC<NotepadProps> = ({
   useEffect(() => {
     if (!isOpen)
       setFormCatatanData({
-        judul: "",
-        isi: "",
-        isPublic: false,
+        judul_catatan: "",
+        isi_catatan: "",
+        privasi: "PRIVATE",
         gambar: "",
-        tag: [],
+        nama_tag: [],
       });
   }, [isOpen]);
 

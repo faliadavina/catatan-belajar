@@ -7,15 +7,14 @@ import { Switch } from "../ui/switch";
 import { Input } from "../ui/input";
 import { CatatanData, MethodType } from "@/lib/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTrashCan,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import axios from "axios";
 
 interface FormCatatanProps {
   catatanData: CatatanData;
@@ -30,31 +29,38 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   onSubmit,
   method,
 }) => {
-  const { id_catatan, judul, isi, isPublic, gambar, tag } = catatanData;
-  const [privasi, setPrivasi] = useState("PRIVATE");
+  const { id: id_catatan, judul_catatan, isi_catatan, privasi, gambar, nama_tag } =
+    catatanData;
+  const [isPrivasi, setIsPrivasi] = useState(privasi == "PUBLIC");
   let data: any;
 
   const handleIsiChange = (value: string) => {
-    onCatatanDataChange({ isi: value });
+    onCatatanDataChange({ isi_catatan: value });
   };
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onCatatanDataChange({
-      tag: e.target.value.split(",").map((tag) => tag.trim()),
+      nama_tag: e.target.value.split(",").map((nama_tag) => nama_tag.trim()),
     });
+  };
+
+  const handlePrivasiChange = () => {
+    setIsPrivasi((prevIsPrivasi) => !prevIsPrivasi);
+    const newPrivasi = isPrivasi ? "PUBLIC" : "PRIVATE";
+    onCatatanDataChange({ privasi: newPrivasi });
   };
 
   const handleMethodChange = (newMethod: MethodType) => {
     method = newMethod;
   };
 
-  useEffect(() => {
-    if (isPublic) {
-      setPrivasi("PUBLIC");
-    } else {
-      setPrivasi("PRIVATE");
-    }
-  }, [isPublic]);
+  // useEffect(() => {
+  //   if (privasi) {
+  //     setPrivasi("PUBLIC");
+  //   } else {
+  //     setPrivasi("PRIVATE");
+  //   }
+  // }, [privasi]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,16 +68,16 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
       if (method != "DELETE") {
         data = {
           id_akun: 2,
-          judul_catatan: judul,
-          isi_catatan: isi,
+          judul_catatan: judul_catatan,
+          isi_catatan: isi_catatan,
           privasi: privasi,
           gambar: gambar,
-          nama_tag: tag,
+          nama_tag: [],
         };
       }
 
       const response = await fetch(
-        `http://localhost:3030/api/catatanbelajar/${id_catatan}`,
+        `http://localhost:3030/api/catatanbelajar/${id_catatan?id_catatan:""}`,
         {
           method: method,
           headers: {
@@ -97,14 +103,16 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
       <div className="flex flex-col space-y-4">
         <Input
           type="text"
-          placeholder="Judul"
-          onChange={(e) => onCatatanDataChange({ judul: e.target.value })}
-          value={judul}
+          placeholder="judul_catatan"
+          onChange={(e) =>
+            onCatatanDataChange({ judul_catatan: e.target.value })
+          }
+          value={judul_catatan}
         />
 
         <div>
           <ReactQuill
-            value={isi}
+            value={isi_catatan}
             onChange={handleIsiChange}
             placeholder="Buat Catatan..."
             theme="snow"
@@ -136,13 +144,13 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
         </div>
 
         <div className="text-left">
-          <Label htmlFor="tag">Tag</Label>
+          <Label htmlFor="nama_tag">nama_tag</Label>
           <Input
             type="text"
-            placeholder="Tag"
+            placeholder="nama_tag"
             onChange={handleTagChange}
-            value={tag}
-            id="tag"
+            value={nama_tag}
+            id="nama_tag"
           />
           <label
             htmlFor="tags"
@@ -158,10 +166,8 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
           <div className="flex items-center space-x-2">
             <div className="relative flex items-center">
               <Switch
-                checked={isPublic}
-                onCheckedChange={(checked) =>
-                  onCatatanDataChange({ isPublic: checked })
-                }
+                checked={isPrivasi}
+                onCheckedChange={handlePrivasiChange}
               />
               <Label htmlFor="private-setting" className="ml-2 cursor-pointer">
                 Public
@@ -194,9 +200,9 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
             <Button
               type="submit"
               className={`bg-[#38B0AB] hover:bg-[#22918D] text-white ml-2 ${
-                !isi.trim() ? "opacity-50 cursor-not-allowed" : ""
+                !isi_catatan.trim() ? "opacity-50 cursor-not-allowed" : ""
               }`}
-              disabled={!isi.trim()}
+              disabled={!isi_catatan.trim()}
             >
               {method === "POST" ? "Simpan" : "Update"}
             </Button>
