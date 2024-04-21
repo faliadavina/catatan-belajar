@@ -5,17 +5,48 @@ import "react-quill/dist/quill.snow.css";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { Input } from "../ui/input";
+import { CatatanData, MethodType } from "@/lib/types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface FormCatatanProps {
+  catatanData: CatatanData;
+  onCatatanDataChange: (updatedData: Partial<CatatanData>) => void;
   onSubmit: (isSubmit: boolean) => void;
+  method: MethodType;
 }
 
-const FormCatatan: React.FC<FormCatatanProps> = ({ onSubmit }) => {
-  const [judul, setJudul] = useState("");
-  const [isi, setIsi] = useState("");
-  const [isPublic, setIsPublic] = useState(false);
+const FormCatatan: React.FC<FormCatatanProps> = ({
+  catatanData,
+  onCatatanDataChange,
+  onSubmit,
+  method,
+}) => {
+  const { id_catatan, judul, isi, isPublic, gambar, tag } = catatanData;
   const [privasi, setPrivasi] = useState("PRIVATE");
-  const [tag, setTag] = useState([""]);
+  let data: any;
+
+  const handleIsiChange = (value: string) => {
+    onCatatanDataChange({ isi: value });
+  };
+
+  const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onCatatanDataChange({
+      tag: e.target.value.split(",").map((tag) => tag.trim()),
+    });
+  };
+
+  const handleMethodChange = (newMethod: MethodType) => {
+    method = newMethod;
+  };
 
   useEffect(() => {
     if (isPublic) {
@@ -25,44 +56,39 @@ const FormCatatan: React.FC<FormCatatanProps> = ({ onSubmit }) => {
     }
   }, [isPublic]);
 
-  const handleIsiChange = (value: string) => {
-    setIsi(value);
-  };
-
-  const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTag(e.target.value.split(",").map((tag) => tag.trim()));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
+      if (method != "DELETE") {
+        data = {
+          id_akun: 2,
+          judul_catatan: judul,
+          isi_catatan: isi,
+          privasi: privasi,
+          gambar: gambar,
+          nama_tag: tag,
+        };
+      }
+
       const response = await fetch(
-        "http://localhost:3030/api/catatanbelajar/",
+        `http://localhost:3030/api/catatanbelajar/${id_catatan}`,
         {
-          method: "POST",
+          method: method,
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            id_akun: 2,
-            judul_catatan: judul,
-            isi_catatan: isi,
-            privasi: privasi,
-            gambar: "",
-            nama_tag: tag,
-          }),
+          body: JSON.stringify(data),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to create thread");
+        throw new Error("Failed to create or update catatan");
       }
 
       onSubmit(true);
     } catch (error) {
-      console.error("Error creating catatan:", error);
-      alert("Failed to create thread. Please try again.");
+      console.error("Error creating or updating catatan:", error);
+      alert("Failed to create or update catatan. Please try again.");
     }
   };
 
@@ -72,11 +98,10 @@ const FormCatatan: React.FC<FormCatatanProps> = ({ onSubmit }) => {
         <Input
           type="text"
           placeholder="Judul"
-          onChange={(e) => setJudul(e.target.value)}
+          onChange={(e) => onCatatanDataChange({ judul: e.target.value })}
           value={judul}
         />
 
-        {/* React Quill Editor */}
         <div>
           <ReactQuill
             value={isi}
@@ -85,62 +110,97 @@ const FormCatatan: React.FC<FormCatatanProps> = ({ onSubmit }) => {
             theme="snow"
             modules={{
               toolbar: [
-                [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                ["bold", "italic", "underline", "strike", "blockquote"],
-                [{ list: "ordered" }, { list: "bullet" }],
-                [{ color: [] }],
                 ["image"],
+                [{ font: [] }],
+                [{ header: [1, 2, 3, false] }],
+                ["bold", "italic", "underline"],
+                [{ list: "ordered" }, { list: "bullet" }],
+                [{ align: [] }],
+                [{ color: [] }],
+                ["clean"],
               ],
             }}
             formats={[
+              "font",
+              "image",
               "header",
               "bold",
               "italic",
               "underline",
-              "strike",
-              "blockquote",
               "list",
               "bullet",
-              "indent",
-              "image",
+              "align",
               "color",
             ]}
           />
         </div>
 
-        <Input
-          type="text"
-          placeholder="Tag"
-          onChange={handleTagChange}
-          value={tag}
-        />
-        <label
-          htmlFor="tags"
-          className="block text-sm text-gray-400 mt-1 ml-1 text-left"
-          style={{ fontSize: "12px" }}
-        >
-          Pisahkan dengan koma (,) tanpa spasi sebelum/setelah koma tersebut
-        </label>
+        <div className="text-left">
+          <Label htmlFor="tag">Tag</Label>
+          <Input
+            type="text"
+            placeholder="Tag"
+            onChange={handleTagChange}
+            value={tag}
+            id="tag"
+          />
+          <label
+            htmlFor="tags"
+            className="block text-sm text-gray-400 mt-1 ml-1 text-left"
+            style={{ fontSize: "12px" }}
+          >
+            Pisahkan dengan koma (,) tanpa spasi sebelum/setelah koma tersebut
+          </label>
+        </div>
 
-        {/* Switch for Private Setting */}
+        {/* footer */}
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center space-x-2">
             <div className="relative flex items-center">
-              <Switch checked={isPublic} onCheckedChange={setIsPublic} />
+              <Switch
+                checked={isPublic}
+                onCheckedChange={(checked) =>
+                  onCatatanDataChange({ isPublic: checked })
+                }
+              />
               <Label htmlFor="private-setting" className="ml-2 cursor-pointer">
                 Public
               </Label>
             </div>
           </div>
-          <Button
-            type="submit"
-            className={`bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-md ${
-              !isi.trim() ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={!isi.trim()}
-          >
-            Simpan
-          </Button>
+
+          <div>
+            {method == "PUT" && (
+              <>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className="px-3 hover:none focus:outline-none font-bold border-2 border-red-600"
+                        onClick={() => handleMethodChange("DELETE")}
+                        variant="ghost"
+                      >
+                        <FontAwesomeIcon icon={faTrashCan} color="red" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Hapus Catatan</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </>
+            )}
+
+            <Button
+              type="submit"
+              className={`bg-[#38B0AB] hover:bg-[#22918D] text-white ml-2 ${
+                !isi.trim() ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={!isi.trim()}
+            >
+              {method === "POST" ? "Simpan" : "Update"}
+            </Button>
+          </div>
         </div>
       </div>
     </form>
