@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faFileArrowDown, faLock } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "@/components/ui/button"
 import { PenSquare } from "lucide-react"
 import parse from "html-react-parser";
 
