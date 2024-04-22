@@ -73,7 +73,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
           isi_catatan: isi_catatan,
           privasi: privasi,
           gambar: gambar,
-          nama_tag: [],
+          nama_tag: nama_tag,
         };
       }
 

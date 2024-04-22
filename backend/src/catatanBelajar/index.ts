@@ -8,7 +8,15 @@ const axios = require('axios');
 const path = require('path');
 
 router.get('/catatanBelajars', async (req, res) => {
-    const catatanBelajars = await prisma.catatanbelajar.findMany();
+    const catatanBelajars = await prisma.catatanbelajar.findMany({
+        include: {
+            catatanbelajar_tag: {
+                    include: {
+                        tag: true, // Include tag information
+                    }
+                }
+        },
+    });
     res.send(catatanBelajars);
 });
 

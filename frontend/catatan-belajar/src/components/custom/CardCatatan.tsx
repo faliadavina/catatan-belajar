@@ -23,12 +23,17 @@ const CardCatatan: React.FC<{
   catatan: CatatanData;
   toggleNotepad: (newMethod?: MethodType, newCatatanData?: CatatanData) => void;
 }> = ({ catatan, toggleNotepad }) => {
+  // Buat array tags yang berisi nama-nama tag dari catatan.catatanbelajar_tag
+  const tags = catatan.nama_tag;
+
   return (
     <Card className="w-[300px]">
       <CardHeader>
         <CardTitle className="text-left text-lg font-bold flex justify-between">
           {catatan.judul_catatan}
-          <FontAwesomeIcon icon={faLock} className="text-[#38B0AB]" />
+          {catatan.privasi === "PRIVATE" && (
+            <FontAwesomeIcon icon={faLock} color="#38B0AB" />
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -46,9 +51,14 @@ const CardCatatan: React.FC<{
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Badge className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">
+        {/* <Badge className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">
           ini tag
-        </Badge>
+        </Badge> */}
+        {tags && tags.map((tag, index) => (
+          <Badge key={index} className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">
+            {tag}
+          </Badge>
+        ))}
         <div>
           <Button
             className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"

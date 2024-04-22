@@ -5,7 +5,7 @@ import Notepad from "./components/custom/Notepad";
 import { Button } from "./components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Input } from "./components/ui/input";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { CatatanData, MethodType } from "./lib/types";
 
@@ -15,6 +15,7 @@ function App() {
   const [method, setMethod] = useState<MethodType>("POST");
   const [catatanBelajar, setCatatanBelajar] = useState<CatatanData[]>([]);
   const [catatanData, setCatatanData] = useState<CatatanData>();
+  const [loggedInAccountId] = useState(2);
   const toggleNotepad = (
     newMethod?: MethodType,
     newCatatanData?: CatatanData
@@ -64,7 +65,10 @@ function App() {
       const response = await axios.get<CatatanData[]>(
         "http://localhost:3030/api/catatanBelajar/catatanBelajars"
       );
-      setCatatanBelajar(response.data);
+      const filteredCatatanList = response.data.filter(catatan => catatan.id_akun === loggedInAccountId || catatan.privasi === "PUBLIC");
+      setCatatanBelajar(filteredCatatanList);
+      console.log(filteredCatatanList);
+      // setCatatanBelajar(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
     }
@@ -91,6 +95,7 @@ function App() {
       <h1 className="text-4xl font-bold text-left">Catatan Belajar</h1>
       <div className="flex justify-between mt-12">
         <Button onClick={() => toggleNotepad("POST")} className="bg-[#38B0AB]">
+          <FontAwesomeIcon icon={faPlus} className="pb-0.5 pr-2"/>
           Tambah
         </Button>
         <div className="relative w-1/4">
