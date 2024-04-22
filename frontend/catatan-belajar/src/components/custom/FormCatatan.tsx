@@ -113,38 +113,36 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
           value={judul_catatan}
         />
 
-        <div>
-          <ReactQuill
-            value={isi_catatan}
-            onChange={handleIsiChange}
-            placeholder="Buat Catatan..."
-            theme="snow"
-            modules={{
-              toolbar: [
-                ["image"],
-                [{ font: [] }],
-                [{ header: [1, 2, 3, false] }],
-                ["bold", "italic", "underline"],
-                [{ list: "ordered" }, { list: "bullet" }],
-                [{ align: [] }],
-                [{ color: [] }],
-                ["clean"],
-              ],
-            }}
-            formats={[
-              "font",
-              "image",
-              "header",
-              "bold",
-              "italic",
-              "underline",
-              "list",
-              "bullet",
-              "align",
-              "color",
-            ]}
-          />
-        </div>
+        <ReactQuill
+          value={isi_catatan}
+          onChange={handleIsiChange}
+          placeholder="Buat Catatan..."
+          theme="snow"
+          modules={{
+            toolbar: [
+              ["image"],
+              [{ font: [] }],
+              [{ header: [1, 2, 3, false] }],
+              ["bold", "italic", "underline"],
+              [{ list: "ordered" }, { list: "bullet" }],
+              [{ align: [] }],
+              [{ color: [] }],
+              ["clean"],
+            ],
+          }}
+          formats={[
+            "font",
+            "image",
+            "header",
+            "bold",
+            "italic",
+            "underline",
+            "list",
+            "bullet",
+            "align",
+            "color",
+          ]}
+        />
 
         <div className="text-left">
           <Label htmlFor="tag">Tag</Label>
@@ -160,7 +158,8 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
             className="block text-sm text-gray-400 mt-1 ml-1 text-left"
             style={{ fontSize: "12px" }}
           >
-            Pisahkan dengan koma (,) tanpa spasi sebelum/setelah koma tersebut
+            Jika lebih dari satu tag, pisahkan dengan koma (,) tanpa spasi
+            sebelum/setelah koma tersebut
           </label>
         </div>
 

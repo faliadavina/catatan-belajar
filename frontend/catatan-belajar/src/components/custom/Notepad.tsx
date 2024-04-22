@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import FormCatatan from "./FormCatatan";
-import { ScrollArea } from "../ui/scroll-area";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTimes,
@@ -9,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "../ui/button";
 import { CatatanData, MethodType } from "@/lib/types";
+import ViewCatatan from "./ViewCatatan";
 
 interface NotepadProps {
   isOpen: boolean;
@@ -96,38 +96,47 @@ const Notepad: React.FC<NotepadProps> = ({
         ref={notepadRef}
         tabIndex={0}
         className="fixed bottom-0 right-0 mb-4 mr-4 overflow-y-auto shadow rounded-lg"
-        style={{ maxHeight: "80vh" }}
+        style={{ maxHeight: "80vh", minWidth:"400px" }}
       >
-        <ScrollArea className="max-h-80vh">
-          <div className="bg-white shadow rounded-lg max-w-lg w-full p-4 relative">
-            {/* header */}
-            <div className="flex items-center justify-between">
-              <h4 className="text-xl font-semibold">Notepad</h4>
-              <div>
-                <button
-                  id="minimize-btn"
-                  className="p-1 rounded-full focus:outline-none"
-                  onClick={toggleMinimize}
-                >
-                  <FontAwesomeIcon icon={faWindowMinimize} />
-                </button>
-                <button
-                  className="p-1 rounded-full focus:outline-none"
-                  onClick={onClose}
-                >
-                  <FontAwesomeIcon icon={faTimes} />
-                </button>
-              </div>
+        <div className="bg-white shadow rounded-lg max-w-lg w-full p-4 relative" >
+          {/* header */}
+          <div className="flex items-center justify-between">
+            <h4 className="text-xl font-semibold">
+              {method == "GET" ? catatanData?.judul_catatan : "Notepad"}
+            </h4>
+            <div>
+              <button
+                id="minimize-btn"
+                className="p-1 rounded-full focus:outline-none"
+                onClick={toggleMinimize}
+              >
+                <FontAwesomeIcon icon={faWindowMinimize} />
+              </button>
+              <button
+                className="p-1 rounded-full focus:outline-none"
+                onClick={onClose}
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
             </div>
-            {/* content */}
-            <FormCatatan
-              catatanData={formCatatanData}
-              onCatatanDataChange={updateCatatanData}
-              onSubmit={handleCatatanSubmit}
-              method={method}
-            />
           </div>
-        </ScrollArea>
+          {
+            /* content */
+            method == "GET" ? (
+              <ViewCatatan
+                onSubmit={handleCatatanSubmit}
+                catatanData={catatanData}
+              />
+            ) : (
+              <FormCatatan
+                catatanData={formCatatanData}
+                onCatatanDataChange={updateCatatanData}
+                onSubmit={handleCatatanSubmit}
+                method={method}
+              />
+            )
+          }
+        </div>
       </div>
     );
   } else if (isMinimized) {

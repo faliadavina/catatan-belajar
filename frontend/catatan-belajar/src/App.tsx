@@ -36,8 +36,8 @@ function App() {
   };
   
   useEffect(() => {
-    fetchData(); // Fetch data tanpa keyword saat pertama kali render
-  }, []);
+    fetchData(); // Fetch data tanpa keyword
+  }, [isNotepadOpen==false]);
   
   useEffect(() => {
     if (searchKeyword !== "") {

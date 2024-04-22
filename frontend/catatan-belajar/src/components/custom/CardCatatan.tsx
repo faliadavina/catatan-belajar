@@ -27,7 +27,7 @@ const CardCatatan: React.FC<{
   const tags = catatan.nama_tag;
 
   return (
-    <Card className="w-[300px]">
+    <Card className="w-[300px]" onClick={() => toggleNotepad("GET", catatan)}>
       <CardHeader>
         <CardTitle className="text-left text-lg font-bold flex justify-between">
           {catatan.judul_catatan}
@@ -39,7 +39,12 @@ const CardCatatan: React.FC<{
       <CardContent>
         <div className="grid w-full items-center gap-4">
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="name" className="text-left font-normal overflow-hidden h-[73px] leading-tight line-clamp-4">{parse(catatan.isi_catatan)}</Label>
+            <Label
+              htmlFor="name"
+              className="text-left font-normal overflow-hidden h-[73px] leading-tight line-clamp-4"
+            >
+              {parse(catatan.isi_catatan)}
+            </Label>
           </div>
           <div className="flex flex-col md:flex-row items-center">
             <Avatar>
@@ -63,7 +68,11 @@ const CardCatatan: React.FC<{
           <Button
             className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
             variant="ghost"
-            onClick={() => toggleNotepad("PUT", catatan)}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleNotepad("PUT", catatan);
+            }}
+            
           >
             <FontAwesomeIcon icon={faPenToSquare} color="#38B0AB" />
           </Button>
