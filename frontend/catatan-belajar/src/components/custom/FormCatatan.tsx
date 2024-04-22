@@ -28,8 +28,14 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   onSubmit,
   method,
 }) => {
-  const { id: id_catatan, judul_catatan, isi_catatan, privasi, gambar, nama_tag } =
-    catatanData;
+  const {
+    id: id_catatan,
+    judul_catatan,
+    isi_catatan,
+    privasi,
+    gambar,
+    nama_tag,
+  } = catatanData;
   const [isPrivasi, setIsPrivasi] = useState(privasi == "PUBLIC");
   let data: any;
 
@@ -41,6 +47,10 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
     onCatatanDataChange({
       nama_tag: e.target.value.split(",").map((nama_tag) => nama_tag.trim()),
     });
+  };
+
+  const handleGambarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onCatatanDataChange({ gambar: e.target.value });
   };
 
   const handlePrivasiChange = () => {
@@ -68,7 +78,9 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
       }
 
       const response = await fetch(
-        `http://localhost:3030/api/catatanbelajar/${id_catatan?id_catatan:""}`,
+        `http://localhost:3030/api/catatanbelajar/${
+          id_catatan ? id_catatan : ""
+        }`,
         {
           method: method,
           headers: {
@@ -94,7 +106,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
       <div className="flex flex-col space-y-4">
         <Input
           type="text"
-          placeholder="judul_catatan"
+          placeholder="Judul Catatan"
           onChange={(e) =>
             onCatatanDataChange({ judul_catatan: e.target.value })
           }
@@ -135,13 +147,13 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
         </div>
 
         <div className="text-left">
-          <Label htmlFor="nama_tag">nama_tag</Label>
+          <Label htmlFor="tag">Tag</Label>
           <Input
             type="text"
-            placeholder="nama_tag"
+            placeholder="Masukan Tag"
             onChange={handleTagChange}
             value={nama_tag}
-            id="nama_tag"
+            id="tag"
           />
           <label
             htmlFor="tags"
@@ -150,6 +162,17 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
           >
             Pisahkan dengan koma (,) tanpa spasi sebelum/setelah koma tersebut
           </label>
+        </div>
+
+        <div className="grid w-full max-w-sm items-center gap-1.5 text-left">
+          <Label htmlFor="cover">Cover image</Label>
+          <Input
+            type="text"
+            placeholder="Masukan URL gambar (cont: https://web.com/cover.jpg)"
+            onChange={handleGambarChange}
+            value={gambar}
+            id="cover"
+          />
         </div>
 
         {/* footer */}
