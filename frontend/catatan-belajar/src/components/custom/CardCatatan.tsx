@@ -9,23 +9,7 @@ import { faPenToSquare, faFileArrowDown, faLock } from "@fortawesome/free-solid-
 import { PenSquare } from "lucide-react"
 import parse from "html-react-parser";
 
-const MAX_LENGTH = 100; // Jumlah maksimum karakter untuk ditampilkan
-
-const truncateText = (text: string, maxLength: number) => {
-  if (text.length <= maxLength) {
-    return text;
-  }
-  const truncatedText = text.slice(0, maxLength);
-  return parse(truncatedText);
-};
-
 const CardCatatan: React.FC<{ judul: string; isi: string }> = ({ judul, isi }) => {
-  const truncatedIsi = truncateText(isi, MAX_LENGTH);
-
-  // Buat elemen placeholder untuk menjaga ukuran card tetap konstan
-  const placeholder = Array.from({ length: MAX_LENGTH - isi.length }).map((_, index) => (
-    <span key={index} className="invisible">x</span>
-  ));
 
   return (
     <Card className="w-[300px]">
@@ -37,7 +21,7 @@ const CardCatatan: React.FC<{ judul: string; isi: string }> = ({ judul, isi }) =
       <CardContent>
         <div className="grid w-full items-center gap-4">
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="name" className="text-left font-normal overflow-hidden h-[50px]">{truncatedIsi}{placeholder}</Label>
+            <Label htmlFor="name" className="text-left font-normal overflow-hidden h-[73px] leading-tight line-clamp-4">{parse(isi)}</Label>
           </div>
           <div className="flex flex-col md:flex-row items-center">
             <Avatar>
