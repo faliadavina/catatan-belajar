@@ -39,22 +39,16 @@ const CardCatatan: React.FC<{
       <CardContent>
         <div className="grid w-full items-center gap-4">
           <div className="flex flex-col space-y-1.5">
-            {/* <Label
-              htmlFor="name"
-              className="text-left font-normal overflow-hidden h-[73px] leading-tight line-clamp-4"
-            >
-              {parse(catatan.isi_catatan)}
-            </Label> */}
             {catatan.gambar ? (
-    <img src={catatan.gambar} alt="Gambar Catatan" className="h-32 w-auto object-cover" />
-  ) : (
-    <Label
-      htmlFor="name"
-      className="text-left font-normal overflow-hidden h-[73px] leading-tight line-clamp-4"
-    >
-      {parse(catatan.isi_catatan)}
-    </Label>
-  )}
+              <img src={catatan.gambar} alt="Gambar Catatan" className="h-28 w-auto object-cover" />
+            ) : (
+              <Label
+                htmlFor="name"
+                className="text-left font-normal overflow-hidden h-[105px] leading-tight line-clamp-6"
+              >
+                {parse(catatan.isi_catatan)}
+              </Label>
+            )}
           </div>
           <div className="flex flex-col md:flex-row items-center">
             <Avatar>
