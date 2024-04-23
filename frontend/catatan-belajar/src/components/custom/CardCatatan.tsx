@@ -23,8 +23,6 @@ const CardCatatan: React.FC<{
   catatan: CatatanData;
   toggleNotepad: (newMethod?: MethodType, newCatatanData?: CatatanData) => void;
 }> = ({ catatan, toggleNotepad }) => {
-  // Buat array tags yang berisi nama-nama tag dari catatan.catatanbelajar_tag
-  // const tag = catatan.nama_tag;
 
   return (
     <Card className="w-[300px]" onClick={() => toggleNotepad("GET", catatan)}>
