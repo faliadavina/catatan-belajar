@@ -26,6 +26,7 @@ const Notepad: React.FC<NotepadProps> = ({
   const notepadRef = useRef<HTMLDivElement>(null);
   const [isMinimized, setIsMinimized] = useState(false);
   const [formCatatanData, setFormCatatanData] = useState<CatatanData>({
+    id_akun:2,
     judul_catatan: "",
     isi_catatan: "",
     privasi: "PRIVATE",
@@ -42,6 +43,7 @@ const Notepad: React.FC<NotepadProps> = ({
   useEffect(() => {
     if (!isOpen)
       setFormCatatanData({
+        id_akun:2,
         judul_catatan: "",
         isi_catatan: "",
         privasi: "PRIVATE",

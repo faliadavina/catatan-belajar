@@ -24,7 +24,7 @@ const CardCatatan: React.FC<{
   toggleNotepad: (newMethod?: MethodType, newCatatanData?: CatatanData) => void;
 }> = ({ catatan, toggleNotepad }) => {
   // Buat array tags yang berisi nama-nama tag dari catatan.catatanbelajar_tag
-  const tags = catatan.nama_tag;
+  // const tag = catatan.nama_tag;
 
   return (
     <Card className="w-[300px]" onClick={() => toggleNotepad("GET", catatan)}>
@@ -39,12 +39,22 @@ const CardCatatan: React.FC<{
       <CardContent>
         <div className="grid w-full items-center gap-4">
           <div className="flex flex-col space-y-1.5">
-            <Label
+            {/* <Label
               htmlFor="name"
               className="text-left font-normal overflow-hidden h-[73px] leading-tight line-clamp-4"
             >
               {parse(catatan.isi_catatan)}
-            </Label>
+            </Label> */}
+            {catatan.gambar ? (
+    <img src={catatan.gambar} alt="Gambar Catatan" className="h-32 w-auto object-cover" />
+  ) : (
+    <Label
+      htmlFor="name"
+      className="text-left font-normal overflow-hidden h-[73px] leading-tight line-clamp-4"
+    >
+      {parse(catatan.isi_catatan)}
+    </Label>
+  )}
           </div>
           <div className="flex flex-col md:flex-row items-center">
             <Avatar>
@@ -56,15 +66,15 @@ const CardCatatan: React.FC<{
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        {/* <Badge className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">
-          ini tag
-        </Badge> */}
-        {tags && tags.map((tag, index) => (
-          <Badge key={index} className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">
-            {tag}
+        <div className="justify-start">
+        {catatan.catatanbelajar_tag?.map(tag => (
+          console.log(tag),
+          <Badge key={tag.tag.nama_tag} className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md  mr-1">
+            {tag.tag.nama_tag}
           </Badge>
         ))}
-        <div>
+        </div>
+        <div className="w-[75px]">
           <Button
             className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
             variant="ghost"

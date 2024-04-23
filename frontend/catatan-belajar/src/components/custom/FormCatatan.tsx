@@ -36,7 +36,8 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
     gambar,
     nama_tag,
   } = catatanData;
-  const [isPrivasi, setIsPrivasi] = useState(privasi == "PUBLIC");
+  const [isPrivasi, setIsPrivasi] = useState(privasi == "PRIVATE");
+  let newPrivasi= isPrivasi ? "PUBLIC" : "PRIVATE";
   let data: any;
 
   const handleIsiChange = (value: string) => {
@@ -54,8 +55,8 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   };
 
   const handlePrivasiChange = () => {
-    setIsPrivasi((prevIsPrivasi) => !prevIsPrivasi);
-    const newPrivasi = isPrivasi ? "PUBLIC" : "PRIVATE";
+    setIsPrivasi(!isPrivasi);
+    newPrivasi = isPrivasi ? "PUBLIC" : "PRIVATE";
     onCatatanDataChange({ privasi: newPrivasi });
   };
 

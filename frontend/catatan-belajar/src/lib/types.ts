@@ -6,7 +6,7 @@ export interface CatatanData {
   privasi: string;
   gambar: string;
   nama_tag: string[];
-  // catatanbelajar_tag: { tag: TagData }[];
+  catatanbelajar_tag?: { tag: TagData }[];
 }
 
 export interface TagData {
