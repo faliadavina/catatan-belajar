@@ -7,7 +7,7 @@ import {
   faCaretUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "../ui/button";
-import { CatatanData, MethodType } from "@/lib/types";
+import { CatatanData, MethodType, Privasi } from "@/lib/types";
 import ViewCatatan from "./ViewCatatan";
 
 interface NotepadProps {
@@ -29,7 +29,7 @@ const Notepad: React.FC<NotepadProps> = ({
     id_akun:2,
     judul_catatan: "",
     isi_catatan: "",
-    privasi: "PRIVATE",
+    privasi: Privasi.PRIVATE,
     gambar: "",
     nama_tag: [],
   });
@@ -46,7 +46,7 @@ const Notepad: React.FC<NotepadProps> = ({
         id_akun:2,
         judul_catatan: "",
         isi_catatan: "",
-        privasi: "PRIVATE",
+        privasi: Privasi.PRIVATE,
         gambar: "",
         nama_tag: [],
       });

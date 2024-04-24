@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Input } from "./components/ui/input";
 import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { CatatanData, MethodType } from "./lib/types";
+import { CatatanData, MethodType, Privasi } from "./lib/types";
 
 function App() {
   const [isNotepadOpen, setIsNotepadOpen] = useState<boolean>(false);
@@ -65,7 +65,7 @@ function App() {
       const response = await axios.get<CatatanData[]>(
         "http://localhost:3030/api/catatanBelajar/catatanBelajars"
       );
-      const filteredCatatanList = response.data.filter(catatan => catatan.id_akun === loggedInAccountId || catatan.privasi === "PUBLIC");
+      const filteredCatatanList = response.data.filter(catatan => catatan.id_akun === loggedInAccountId || catatan.privasi === Privasi.PUBLIC);
       setCatatanBelajar(filteredCatatanList);
       console.log(filteredCatatanList);
       // setCatatanBelajar(response.data);
