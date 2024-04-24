@@ -17,7 +17,7 @@ import {
   faLock,
 } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
-import { CatatanData, MethodType } from "@/lib/types";
+import { CatatanData, MethodType, Privasi } from "@/lib/types";
 
 const CardCatatan: React.FC<{
   catatan: CatatanData;
@@ -29,7 +29,7 @@ const CardCatatan: React.FC<{
       <CardHeader>
         <CardTitle className="text-left text-lg font-bold flex justify-between">
           {catatan.judul_catatan}
-          {catatan.privasi === "PRIVATE" && (
+          {catatan.privasi === Privasi.PRIVATE && (
             <FontAwesomeIcon icon={faLock} color="#38B0AB" />
           )}
         </CardTitle>

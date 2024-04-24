@@ -5,7 +5,7 @@ import "react-quill/dist/quill.snow.css";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { Input } from "../ui/input";
-import { CatatanData, MethodType } from "@/lib/types";
+import { CatatanData, MethodType, Privasi } from "@/lib/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -36,9 +36,13 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
     gambar,
     nama_tag,
   } = catatanData;
-  const [isPrivasi, setIsPrivasi] = useState(privasi == "PRIVATE");
-  let newPrivasi= isPrivasi ? "PUBLIC" : "PRIVATE";
-  let data: any;
+  const [isPrivasi, setIsPrivasi] = useState<boolean>(
+    privasi === Privasi.PUBLIC
+  );
+
+  useEffect(() => {
+    setIsPrivasi(privasi === Privasi.PUBLIC);
+  }, [privasi]);
 
   const handleIsiChange = (value: string) => {
     onCatatanDataChange({ isi_catatan: value });
@@ -55,8 +59,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   };
 
   const handlePrivasiChange = () => {
-    setIsPrivasi(!isPrivasi);
-    newPrivasi = isPrivasi ? "PUBLIC" : "PRIVATE";
+    const newPrivasi = !isPrivasi ? Privasi.PUBLIC : Privasi.PRIVATE;
     onCatatanDataChange({ privasi: newPrivasi });
   };
 
@@ -67,12 +70,14 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      let data: any;
+
       if (method != "DELETE") {
         data = {
           id_akun: 2,
           judul_catatan: judul_catatan,
           isi_catatan: isi_catatan,
-          privasi: privasi,
+          privasi: isPrivasi ? Privasi.PUBLIC : Privasi.PRIVATE,
           gambar: gambar,
           nama_tag: nama_tag,
         };
@@ -118,6 +123,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
           value={isi_catatan}
           onChange={handleIsiChange}
           placeholder="Buat Catatan..."
+          id="form_isi"
           theme="snow"
           modules={{
             toolbar: [
@@ -144,6 +150,13 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
             "color",
           ]}
         />
+        <label
+          htmlFor="form_isi"
+          className="block text-sm text-gray-400 mt-1 ml-1 text-left"
+          style={{ fontSize: "12px" }}
+        >
+          Total ukuran gambar pada isi tidak boleh lebih dari 100KB
+        </label>
 
         <div className="text-left">
           <Label htmlFor="tag">Tag</Label>
