@@ -182,7 +182,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
           </label>
         </div>
 
-        <div className="grid w-full max-w-sm items-center gap-1.5 text-left">
+        <div className="text-left">
           <Label htmlFor="cover">Cover image</Label>
           <Input
             type="text"
