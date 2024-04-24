@@ -72,7 +72,8 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
     e.preventDefault();
     try {
       let data: any;
-
+      setIsLoading(true);
+      
       if (method != "DELETE") {
         data = {
           id_akun: 2,
