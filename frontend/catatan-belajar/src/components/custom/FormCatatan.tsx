@@ -54,7 +54,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onCatatanDataChange({
-      nama_tag: e.target.value.split(",").map((nama_tag) => nama_tag.trim()),
+      nama_tag: e.target.value.split(",")
     });
   };
 
