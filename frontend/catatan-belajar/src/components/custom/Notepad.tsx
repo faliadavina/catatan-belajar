@@ -103,7 +103,7 @@ const Notepad: React.FC<NotepadProps> = ({
         <div className="bg-white shadow rounded-lg max-w-lg w-full p-4 relative" >
           {/* header */}
           <div className="flex items-center justify-between">
-            <h4 className="text-xl font-semibold">
+            <h4 className="text-xl font-semibold break-all max-w-80 md:max-w-[420px]">
               {method == "GET" ? catatanData?.judul_catatan : "Notepad"}
             </h4>
             <div>

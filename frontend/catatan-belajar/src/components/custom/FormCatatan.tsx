@@ -35,6 +35,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
     privasi,
     gambar,
     nama_tag,
+    catatanbelajar_tag,
   } = catatanData;
   const [isPrivasi, setIsPrivasi] = useState<boolean>(
     privasi === Privasi.PUBLIC
@@ -43,6 +44,19 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   useEffect(() => {
     setIsPrivasi(privasi === Privasi.PUBLIC);
   }, [privasi]);
+
+  function combineTags(catatanData: CatatanData): string {
+    if (
+      catatanData.catatanbelajar_tag &&
+      catatanData.catatanbelajar_tag.length > 0
+    ) {
+      const combinedTags = catatanData.catatanbelajar_tag
+        .map((item) => item.tag.nama_tag)
+        .join(",");
+      return combinedTags;
+    }
+    return "";
+  }
 
   const [isJudulValid, setIsJudulValid] = useState<boolean>(true);
   const [isIsiValid, setIsIsiValid] = useState<boolean>(true);
@@ -54,7 +68,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onCatatanDataChange({
-      nama_tag: e.target.value.split(",")
+      nama_tag: e.target.value.split(","),
     });
   };
 
@@ -74,49 +88,50 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-    
+      console.log("Judul Catatan:", judul_catatan);
+      console.log("Isi Catatan:", isi_catatan);
+
+      if (!judul_catatan.trim()) {
+        setIsJudulValid(false);
+      } else {
+        setIsJudulValid(true);
+      }
+
+      const isContentEmpty = !!(isi_catatan.trim() === "<p><br></p>");
+      if (!isi_catatan.trim() || isContentEmpty) {
+        setIsIsiValid(false);
+      } else {
+        setIsIsiValid(true);
+      }
+
+      if (!judul_catatan.trim() && (!isi_catatan.trim() || isContentEmpty)) {
+        setIsJudulValid(false);
+        setIsIsiValid(false);
+        return;
+      }
+
+      if (!judul_catatan.trim()) {
+        return;
+      }
+
+      if (!isi_catatan.trim() || isContentEmpty) {
+        return;
+      }
+
       let data: any;
       setIsLoading(true);
-    
+
       if (method !== "DELETE") {
         data = {
-          id_akun: 3,
+          id_akun: 2,
           judul_catatan: judul_catatan,
           isi_catatan: isi_catatan,
           privasi: privasi,
           gambar: gambar,
           nama_tag: nama_tag,
         };
-
-        if (!judul_catatan.trim()) {
-          setIsJudulValid(false);
-        } else {
-          setIsJudulValid(true);
-        }
-  
-        const isContentEmpty = !!(isi_catatan.trim() === '<p><br></p>');
-        if (!isi_catatan.trim() || isContentEmpty) {
-          setIsIsiValid(false);
-        } else {
-          setIsIsiValid(true);
-        }
-  
-        if (!judul_catatan.trim() && (!isi_catatan.trim() || isContentEmpty)) {
-          setIsJudulValid(false);
-          setIsIsiValid(false);
-          return;
-        }
-  
-        if (!judul_catatan.trim()) {
-          return;
-        }
-  
-        if (!isi_catatan.trim() || isContentEmpty) {
-          return;
-        }
-
       }
-    
+
       const response = await fetch(
         `http://localhost:3030/api/catatanbelajar/${
           id_catatan ? id_catatan : ""
@@ -129,13 +144,13 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
           body: JSON.stringify(data),
         }
       );
-    
+
       if (!response.ok) {
         throw new Error("Failed to create or update catatan");
       }
-    
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
-    
+
       setIsLoading(false);
       onSubmit(true);
     } catch (error) {
@@ -143,8 +158,6 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
       alert("Failed to create or update catatan. Please try again.");
     }
   };
-  
-
 
   return (
     <form onSubmit={handleSubmit} className="mt-4">
@@ -211,16 +224,20 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
             Total ukuran gambar pada isi tidak boleh lebih dari 100KB
           </label>
         </div>
-
         <div className="text-left">
           <Label htmlFor="tag">Tag</Label>
           <Input
             type="text"
             placeholder="Masukan Tag"
             onChange={handleTagChange}
-            value={nama_tag}
+            value={
+              nama_tag && nama_tag.length > 0
+                ? nama_tag.join(",")
+                : combineTags(catatanData)
+            }
             id="tag"
           />
+
           <label
             htmlFor="tag"
             className="block text-sm text-gray-400 mt-1 ml-1 text-left"
