@@ -110,7 +110,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
     
       if (method !== "DELETE") {
         data = {
-          id_akun: 2,
+          id_akun: 3,
           judul_catatan: judul_catatan,
           isi_catatan: isi_catatan,
           privasi: privasi,

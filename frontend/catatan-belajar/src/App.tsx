@@ -15,7 +15,7 @@ function App() {
   const [method, setMethod] = useState<MethodType>("POST");
   const [catatanBelajar, setCatatanBelajar] = useState<CatatanData[]>([]);
   const [catatanData, setCatatanData] = useState<CatatanData>();
-  const [loggedInAccountId] = useState(2);
+  const [loggedInAccountId] = useState(3);
   const toggleNotepad = (
     newMethod?: MethodType,
     newCatatanData?: CatatanData
@@ -53,7 +53,9 @@ function App() {
       const response = await axios.get<CatatanData[]>(
         `http://localhost:3030/api/catatanBelajar?keyword=${keyword}`
       );
-      setCatatanBelajar(response.data);
+      const filteredCatatanList = response.data.filter(catatan => catatan.id_akun === loggedInAccountId || catatan.privasi === Privasi.PUBLIC);
+      setCatatanBelajar(filteredCatatanList);
+      console.log(filteredCatatanList);
     } catch (error) {
       console.error("Failed to search data:", error);
     }
@@ -68,7 +70,6 @@ function App() {
       const filteredCatatanList = response.data.filter(catatan => catatan.id_akun === loggedInAccountId || catatan.privasi === Privasi.PUBLIC);
       setCatatanBelajar(filteredCatatanList);
       console.log(filteredCatatanList);
-      // setCatatanBelajar(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
     }
@@ -83,7 +84,7 @@ function App() {
         key={catatan.id}
         className="w-full md:w-1/2 lg:w-1/3 mb-4 md:mb-0 pb-3 px-4 flex"
       >
-        <CardCatatan catatan={catatan} toggleNotepad={toggleNotepad}/>
+        <CardCatatan catatan={catatan} toggleNotepad={toggleNotepad} loggedInAccountId={loggedInAccountId}/>
       </div>
     ));
   } else {

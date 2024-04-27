@@ -48,11 +48,11 @@ router.get('/', async (req, res) => {
             nama_tag: {
                 contains: keyword,
                 mode: 'insensitive'
-            }
+            },
         },
         select: {
             id: true
-        }
+        },
     }).then(tags => tags.map(tag => tag.id));
 
     // Mencari catatan belajar yang memiliki tag dengan ID tersebut
@@ -77,6 +77,15 @@ router.get('/', async (req, res) => {
                       }
                 }
             ]
+        },
+        include: {
+            catatanbelajar_tag: {
+                    include: {
+                        tag: {
+                            select: { nama_tag: true } // Hanya memilih nama_tag
+                        }
+                    }
+                }
         },
     });
 

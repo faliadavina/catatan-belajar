@@ -22,13 +22,16 @@ import { CatatanData, MethodType, Privasi } from "@/lib/types";
 const CardCatatan: React.FC<{
   catatan: CatatanData;
   toggleNotepad: (newMethod?: MethodType, newCatatanData?: CatatanData) => void;
-}> = ({ catatan, toggleNotepad }) => {
+  loggedInAccountId: number;
+}> = ({ catatan, toggleNotepad, loggedInAccountId }) => {
 
   return (
     <Card className="w-[300px]" onClick={() => toggleNotepad("GET", catatan)}>
       <CardHeader>
         <CardTitle className="text-left text-lg font-bold flex justify-between">
-          {catatan.judul_catatan}
+          <div className="overflow-hidden h-[48px] leading-tight line-clamp-2">
+            {catatan.judul_catatan}
+          </div>
           {catatan.privasi === Privasi.PRIVATE && (
             <FontAwesomeIcon icon={faLock} color="#38B0AB" />
           )}
@@ -42,7 +45,7 @@ const CardCatatan: React.FC<{
             ) : (
               <Label
                 htmlFor="name"
-                className="text-left font-normal overflow-hidden h-[105px] leading-tight line-clamp-6"
+                className="text-left font-normal overflow-hidden h-[105px] w-[245px] leading-tight line-clamp-6"
               >
                 {parse(catatan.isi_catatan)}
               </Label>
@@ -58,32 +61,35 @@ const CardCatatan: React.FC<{
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <div className="justify-start">
-        {catatan.catatanbelajar_tag?.map(tag => (
-          console.log(tag),
-          <Badge key={tag.tag.nama_tag} className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md  mr-1">
-            {tag.tag.nama_tag}
-          </Badge>
-        ))}
+        <div className="flex justify-start items-center">
+          {catatan.catatanbelajar_tag?.map(tag => (
+            console.log(tag),
+            <Badge key={tag.tag.nama_tag} className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md  mr-1">
+              {tag.tag.nama_tag}
+            </Badge>
+          ))}
         </div>
-        <div className="w-[75px]">
-          <Button
-            className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
-            variant="ghost"
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleNotepad("PUT", catatan);
-            }}
-            
-          >
-            <FontAwesomeIcon icon={faPenToSquare} color="#38B0AB" />
-          </Button>
-          <Button
-            className="mx-1 w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
-            variant="ghost"
-          >
-            <FontAwesomeIcon icon={faFileArrowDown} color="#38B0AB" />
-          </Button>
+        <div className="flex items-center">
+          {loggedInAccountId === catatan.id_akun &&  (
+              <Button
+                className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleNotepad("PUT", catatan);
+                }}
+              >
+                <FontAwesomeIcon icon={faPenToSquare} color="#38B0AB" />
+              </Button>
+          )}
+          {(catatan.privasi === Privasi.PUBLIC || loggedInAccountId === catatan.id_akun)   &&  (
+              <Button
+                className="mx-1 w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
+                variant="ghost"
+              >
+                <FontAwesomeIcon icon={faFileArrowDown} color="#38B0AB" />
+              </Button>
+          )}
         </div>
       </CardFooter>
     </Card>
