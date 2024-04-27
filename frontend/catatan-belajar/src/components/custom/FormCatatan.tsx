@@ -74,36 +74,6 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-
-      console.log("Judul Catatan:", judul_catatan);
-      console.log("Isi Catatan:", isi_catatan);
-
-      if (!judul_catatan.trim()) {
-        setIsJudulValid(false);
-      } else {
-        setIsJudulValid(true);
-      }
-
-      const isContentEmpty = !!(isi_catatan.trim() === '<p><br></p>');
-      if (!isi_catatan.trim() || isContentEmpty) {
-        setIsIsiValid(false);
-      } else {
-        setIsIsiValid(true);
-      }
-
-      if (!judul_catatan.trim() && (!isi_catatan.trim() || isContentEmpty)) {
-        setIsJudulValid(false);
-        setIsIsiValid(false);
-        return;
-      }
-
-      if (!judul_catatan.trim()) {
-        return;
-      }
-
-      if (!isi_catatan.trim() || isContentEmpty) {
-        return;
-      }
     
       let data: any;
       setIsLoading(true);
@@ -117,6 +87,34 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
           gambar: gambar,
           nama_tag: nama_tag,
         };
+
+        if (!judul_catatan.trim()) {
+          setIsJudulValid(false);
+        } else {
+          setIsJudulValid(true);
+        }
+  
+        const isContentEmpty = !!(isi_catatan.trim() === '<p><br></p>');
+        if (!isi_catatan.trim() || isContentEmpty) {
+          setIsIsiValid(false);
+        } else {
+          setIsIsiValid(true);
+        }
+  
+        if (!judul_catatan.trim() && (!isi_catatan.trim() || isContentEmpty)) {
+          setIsJudulValid(false);
+          setIsIsiValid(false);
+          return;
+        }
+  
+        if (!judul_catatan.trim()) {
+          return;
+        }
+  
+        if (!isi_catatan.trim() || isContentEmpty) {
+          return;
+        }
+
       }
     
       const response = await fetch(
@@ -146,7 +144,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
     }
   };
   
-  
+
 
   return (
     <form onSubmit={handleSubmit} className="mt-4">
