@@ -198,6 +198,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
               "align",
               "color",
             ]}
+            className={!isIsiValid ? "border border-red-500" : ""}
           />
           {!isIsiValid && (
             <label className="text-sm text-red-600 dark:text-red-500">
