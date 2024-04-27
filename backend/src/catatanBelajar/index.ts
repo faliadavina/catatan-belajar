@@ -2,23 +2,14 @@ import express from "express";
 import prisma from "../prisma";
 import PDFDocument from 'pdfkit';
 import fs from "fs";
+import Stream from "pdf-lib/cjs/core/streams/Stream";
 
 const router = express.Router();
 const axios = require('axios');
 const path = require('path');
 
 router.get('/catatanBelajars', async (req, res) => {
-    const catatanBelajars = await prisma.catatanbelajar.findMany({
-        include: {
-            catatanbelajar_tag: {
-                    include: {
-                        tag: {
-                            select: { nama_tag: true } // Hanya memilih nama_tag
-                        }
-                    }
-                }
-        },
-    });
+    const catatanBelajars = await prisma.catatanbelajar.findMany();
     res.send(catatanBelajars);
 });
 
@@ -48,11 +39,11 @@ router.get('/', async (req, res) => {
             nama_tag: {
                 contains: keyword,
                 mode: 'insensitive'
-            },
+            }
         },
         select: {
             id: true
-        },
+        }
     }).then(tags => tags.map(tag => tag.id));
 
     // Mencari catatan belajar yang memiliki tag dengan ID tersebut
@@ -77,15 +68,6 @@ router.get('/', async (req, res) => {
                       }
                 }
             ]
-        },
-        include: {
-            catatanbelajar_tag: {
-                    include: {
-                        tag: {
-                            select: { nama_tag: true } // Hanya memilih nama_tag
-                        }
-                    }
-                }
         },
     });
 
@@ -156,53 +138,50 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const catatanId = req.params.id;
     const updateCatatanData = req.body;
+    const tagNamas = updateCatatanData.nama_tag; // Ubah nama variabel agar sesuai dengan tipe data array
 
-    if (updateCatatanData.nama_tag != undefined) {
-        const tagNamas = updateCatatanData.nama_tag; // Ubah nama variabel agar sesuai dengan tipe data array
+    // Inisialisasi array untuk menyimpan ID tag baru
+    const newTagIds = [];
 
-        // Inisialisasi array untuk menyimpan ID tag baru
-        const newTagIds = [];
+    // Proses setiap nama tag
+    for (const tagNama of tagNamas) {
+        let tagId;
+        const existingTag = await prisma.tag.findUnique({
+            where: {
+                nama_tag: tagNama
+            }
+        });
 
-        // Proses setiap nama tag
-        for (const tagNama of tagNamas) {
-            let tagId;
-            const existingTag = await prisma.tag.findUnique({
-                where: {
+        if (existingTag) {
+            tagId = existingTag.id;
+        } else {
+            const newTag = await prisma.tag.create({
+                data: {
                     nama_tag: tagNama
                 }
             });
-
-            if (existingTag) {
-                tagId = existingTag.id;
-            } else {
-                const newTag = await prisma.tag.create({
-                    data: {
-                        nama_tag: tagNama
-                    }
-                });
-                tagId = newTag.id;
-            }
-
-            // Tambahkan ID tag baru ke dalam array
-            newTagIds.push(tagId);
+            tagId = newTag.id;
         }
 
-        // Hapus semua tag lama dari catatan belajar
-        await prisma.catatanbelajar_tag.deleteMany({
-            where: {
+        // Tambahkan ID tag baru ke dalam array
+        newTagIds.push(tagId);
+    }
+
+    // Hapus semua tag lama dari catatan belajar
+    await prisma.catatanbelajar_tag.deleteMany({
+        where: {
+            id_catatanbelajar: parseInt(catatanId),
+        },
+    });
+
+    // Tambahkan tag baru ke catatan belajar
+    for (const tagId of newTagIds) {
+        await prisma.catatanbelajar_tag.create({
+            data: {
                 id_catatanbelajar: parseInt(catatanId),
-            },
+                id_tag: tagId
+            }
         });
-
-        // Tambahkan tag baru ke catatan belajar
-        for (const tagId of newTagIds) {
-            await prisma.catatanbelajar_tag.create({
-                data: {
-                    id_catatanbelajar: parseInt(catatanId),
-                    id_tag: tagId
-                }
-            });
-        }
     }
 
     const updatedCatatanBelajar = await prisma.catatanbelajar.update({
@@ -277,8 +256,10 @@ router.get('/catatanBelajar/:id/download', async (req, res) => {
         method: 'GET',
         responseType: 'stream'
     });
+    writer.write(response.data);
+    writer.end();
 
-    response.data.pipe(writer);
+    // response.data.pipe(writer);
 
     writer.on('finish', () => {
         // Calculate x position to center the image
@@ -290,6 +271,7 @@ router.get('/catatanBelajar/:id/download', async (req, res) => {
         doc.image(imagePath, xPos, doc.y, { width: imageWidth });
 
         doc.end();
+        
         res.sendFile(pdfPath);
     });
 

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import FormCatatan from "./FormCatatan";
+import { ScrollArea } from "../ui/scroll-area";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTimes,
@@ -7,14 +8,14 @@ import {
   faCaretUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "../ui/button";
-import { CatatanData, MethodType, Privasi } from "@/lib/types";
-import ViewCatatan from "./ViewCatatan";
+import { CatatanData, MethodType } from "@/lib/types";
 
 interface NotepadProps {
   isOpen: boolean;
   onClose: () => void;
   method: MethodType;
   catatanData?: CatatanData;
+  onRefresh: () => void;
 }
 
 const Notepad: React.FC<NotepadProps> = ({
@@ -22,14 +23,15 @@ const Notepad: React.FC<NotepadProps> = ({
   onClose,
   method,
   catatanData,
+  onRefresh,
 }) => {
   const notepadRef = useRef<HTMLDivElement>(null);
+ 
   const [isMinimized, setIsMinimized] = useState(false);
   const [formCatatanData, setFormCatatanData] = useState<CatatanData>({
-    id_akun:2,
     judul_catatan: "",
     isi_catatan: "",
-    privasi: Privasi.PRIVATE,
+    privasi: "PRIVATE",
     gambar: "",
     nama_tag: [],
   });
@@ -43,10 +45,9 @@ const Notepad: React.FC<NotepadProps> = ({
   useEffect(() => {
     if (!isOpen)
       setFormCatatanData({
-        id_akun:2,
         judul_catatan: "",
         isi_catatan: "",
-        privasi: Privasi.PRIVATE,
+        privasi: "PRIVATE",
         gambar: "",
         nama_tag: [],
       });
@@ -75,12 +76,6 @@ const Notepad: React.FC<NotepadProps> = ({
     }
   }, [isOpen, isMinimized]);
 
-  const handleCatatanSubmit = async (isSubmit: boolean) => {
-    if (isSubmit) {
-      onClose();
-    }
-  };
-
   const toggleMinimize = () => {
     setIsMinimized(!isMinimized);
   };
@@ -92,53 +87,53 @@ const Notepad: React.FC<NotepadProps> = ({
     }));
   };
 
+  const handleCatatanSubmit = async (isSubmit: boolean) => {
+    if (isSubmit) {
+      onClose()
+    }
+    onRefresh()
+  };
+
   if (isOpen && !isMinimized) {
     return (
+     
       <div
         ref={notepadRef}
         tabIndex={0}
         className="fixed bottom-0 right-0 mb-4 mr-4 overflow-y-auto shadow rounded-lg"
-        style={{ maxHeight: "80vh", minWidth:"400px" }}
+        style={{ maxHeight: "80vh" }}
       >
-        <div className="bg-white shadow rounded-lg max-w-lg w-full p-4 relative" >
-          {/* header */}
-          <div className="flex items-center justify-between">
-            <h4 className="text-xl font-semibold break-all max-w-80 md:max-w-[420px]">
-              {method == "GET" ? catatanData?.judul_catatan : "Notepad"}
-            </h4>
-            <div>
-              <button
-                id="minimize-btn"
-                className="p-1 rounded-full focus:outline-none"
-                onClick={toggleMinimize}
-              >
-                <FontAwesomeIcon icon={faWindowMinimize} />
-              </button>
-              <button
-                className="p-1 rounded-full focus:outline-none"
-                onClick={onClose}
-              >
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
+
+        <ScrollArea className="max-h-80vh">
+          <div className="bg-white shadow rounded-lg max-w-lg w-full p-4 relative">
+            {/* header */}
+            <div className="flex items-center justify-between">
+              <h4 className="text-xl font-semibold">Notepad</h4>
+              <div>
+                <button
+                  id="minimize-btn"
+                  className="p-1 rounded-full focus:outline-none"
+                  onClick={toggleMinimize}
+                >
+                  <FontAwesomeIcon icon={faWindowMinimize} />
+                </button>
+                <button
+                  className="p-1 rounded-full focus:outline-none"
+                  onClick={onClose}
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              </div>
             </div>
+            {/* content */}
+            <FormCatatan
+              catatanData={formCatatanData}
+              onCatatanDataChange={updateCatatanData}
+              onSubmit={handleCatatanSubmit}
+              method={method}
+            />
           </div>
-          {
-            /* content */
-            method == "GET" ? (
-              <ViewCatatan
-                onSubmit={handleCatatanSubmit}
-                catatanData={catatanData}
-              />
-            ) : (
-              <FormCatatan
-                catatanData={formCatatanData}
-                onCatatanDataChange={updateCatatanData}
-                onSubmit={handleCatatanSubmit}
-                method={method}
-              />
-            )
-          }
-        </div>
+        </ScrollArea>
       </div>
     );
   } else if (isMinimized) {

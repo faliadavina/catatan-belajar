@@ -5,9 +5,10 @@ import Notepad from "./components/custom/Notepad";
 import { Button } from "./components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Input } from "./components/ui/input";
-import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { CatatanData, MethodType, Privasi } from "./lib/types";
+import { CatatanData, MethodType } from "./lib/types";
+import DialogPesan from "./components/custom/DialogKonfirmasi";
 
 function App() {
   const [isNotepadOpen, setIsNotepadOpen] = useState<boolean>(false);
@@ -15,7 +16,17 @@ function App() {
   const [method, setMethod] = useState<MethodType>("POST");
   const [catatanBelajar, setCatatanBelajar] = useState<CatatanData[]>([]);
   const [catatanData, setCatatanData] = useState<CatatanData>();
-  const [loggedInAccountId] = useState(3);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const catatanExample: CatatanData = {
+    id: 20,
+    judul_catatan: "Catatan Proyek 7",
+    isi_catatan: "Proyek 3 kali ini menggunakan open edx sebagai teknologi yang akan digunakan serta diimplementasikan selama 1 semester kedepan",
+    privasi: "PRIVATE",
+    gambar:
+      "https://assets.kompasiana.com/statics/crawl/552c0d1d6ea8344c398b4567.jpeg?t=o&v=740&x=416",
+    nama_tag: ["Kimia", "Fisika Kuantum"],
+  };
   const toggleNotepad = (
     newMethod?: MethodType,
     newCatatanData?: CatatanData
@@ -36,8 +47,8 @@ function App() {
   };
   
   useEffect(() => {
-    fetchData(); // Fetch data tanpa keyword
-  }, [isNotepadOpen==false]);
+    fetchData(); // Fetch data tanpa keyword saat pertama kali render
+  }, []);
   
   useEffect(() => {
     if (searchKeyword !== "") {
@@ -53,9 +64,7 @@ function App() {
       const response = await axios.get<CatatanData[]>(
         `http://localhost:3030/api/catatanBelajar?keyword=${keyword}`
       );
-      const filteredCatatanList = response.data.filter(catatan => catatan.id_akun === loggedInAccountId || catatan.privasi === Privasi.PUBLIC);
-      setCatatanBelajar(filteredCatatanList);
-      console.log(filteredCatatanList);
+      setCatatanBelajar(response.data);
     } catch (error) {
       console.error("Failed to search data:", error);
     }
@@ -67,14 +76,11 @@ function App() {
       const response = await axios.get<CatatanData[]>(
         "http://localhost:3030/api/catatanBelajar/catatanBelajars"
       );
-      const filteredCatatanList = response.data.filter(catatan => catatan.id_akun === loggedInAccountId || catatan.privasi === Privasi.PUBLIC);
-      setCatatanBelajar(filteredCatatanList);
-      console.log(filteredCatatanList);
+      setCatatanBelajar(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
     }
   };
-  
 
   // Menampilkan catatan belajar
   let cards;
@@ -82,9 +88,9 @@ function App() {
     cards = catatanBelajar.map((catatan) => (
       <div
         key={catatan.id}
-        className="w-full md:w-1/2 lg:w-1/3 mb-4 md:mb-0 pb-3 px-4 flex"
+        className="w-full md:w-1/2 lg:w-1/3 mb-4 md:mb-0 pb-3"
       >
-        <CardCatatan catatan={catatan} toggleNotepad={toggleNotepad} loggedInAccountId={loggedInAccountId}/>
+        <CardCatatan catatan={catatan} toggleNotepad={toggleNotepad}/>
       </div>
     ));
   } else {
@@ -96,8 +102,15 @@ function App() {
       <h1 className="text-4xl font-bold text-left">Catatan Belajar</h1>
       <div className="flex justify-between mt-12">
         <Button onClick={() => toggleNotepad("POST")} className="bg-[#38B0AB]">
-          <FontAwesomeIcon icon={faPlus} className="pb-0.5 pr-2"/>
           Tambah
+        </Button>
+        {/* coba update. nanti ganti buat per-data di card */}
+        <Button
+          onClick={() => toggleNotepad("PUT", catatanExample)}
+          className="border-2 border-[#38B0AB]"
+          variant="ghost"
+        >
+          <FontAwesomeIcon icon={faPenToSquare} color="#38B0AB" />
         </Button>
         <div className="relative w-1/4">
           <Input
@@ -120,6 +133,7 @@ function App() {
           onClose={toggleNotepad}
           method={method}
           catatanData={catatanData}
+          onRefresh={fetchData}
         />
       </div>
     </div>

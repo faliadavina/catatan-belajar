@@ -1,99 +1,119 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPenToSquare,
-  faFileArrowDown,
-  faLock,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faFileArrowDown, faLock } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
-import { CatatanData, MethodType, Privasi } from "@/lib/types";
+import { CatatanData, MethodType } from "@/lib/types";
+import axios from "axios";
+
+const MAX_LENGTH = 100; // Jumlah maksimum karakter untuk ditampilkan
+
+const truncateText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) {
+        return text;
+    }
+    const truncatedText = text.slice(0, maxLength);
+    return parse(truncatedText);
+};
 
 const CardCatatan: React.FC<{
-  catatan: CatatanData;
-  toggleNotepad: (newMethod?: MethodType, newCatatanData?: CatatanData) => void;
-  loggedInAccountId: number;
-}> = ({ catatan, toggleNotepad, loggedInAccountId }) => {
+    catatan: CatatanData;
+    toggleNotepad: (newMethod?: MethodType, newCatatanData?: CatatanData) => void;
+}> = ({ catatan, toggleNotepad }) => {
+    const truncatedIsi = truncateText(catatan.isi_catatan, MAX_LENGTH);
 
-  return (
-    <Card className="w-[300px]" onClick={() => toggleNotepad("GET", catatan)}>
-      <CardHeader>
-        <CardTitle className="text-left text-lg font-bold flex justify-between">
-          <div className="overflow-hidden h-[48px] leading-tight line-clamp-2">
-            {catatan.judul_catatan}
-          </div>
-          {catatan.privasi === Privasi.PRIVATE && (
-            <FontAwesomeIcon icon={faLock} color="#38B0AB" />
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid w-full items-center gap-4">
-          <div className="flex flex-col space-y-1.5">
-            {catatan.gambar ? (
-              <img src={catatan.gambar} alt="Gambar Catatan" className="h-28 w-auto object-cover" />
-            ) : (
-              <Label
-                htmlFor="name"
-                className="text-left font-normal overflow-hidden h-[105px] w-[245px] leading-tight line-clamp-6"
-              >
-                {parse(catatan.isi_catatan)}
-              </Label>
-            )}
-          </div>
-          <div className="flex flex-col md:flex-row items-center">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <Label className="text-sm font-medium ml-2">Nama si User</Label>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <div className="flex justify-start items-center">
-          {catatan.catatanbelajar_tag?.map(tag => (
-            console.log(tag),
-            <Badge key={tag.tag.nama_tag} className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md  mr-1">
-              {tag.tag.nama_tag}
-            </Badge>
-          ))}
-        </div>
-        <div className="flex items-center">
-          {loggedInAccountId === catatan.id_akun &&  (
-              <Button
-                className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleNotepad("PUT", catatan);
-                }}
-              >
-                <FontAwesomeIcon icon={faPenToSquare} color="#38B0AB" />
-              </Button>
-          )}
-          {(catatan.privasi === Privasi.PUBLIC || loggedInAccountId === catatan.id_akun)   &&  (
-              <Button
-                className="mx-1 w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
-                variant="ghost"
-              >
-                <FontAwesomeIcon icon={faFileArrowDown} color="#38B0AB" />
-              </Button>
-          )}
-        </div>
-      </CardFooter>
-    </Card>
-  );
+    const handleDownload = async () => {
+        try {
+            const response = await axios.get(`/catatanBelajar/3/download`, //ganti aja pake endpoint yang bener
+            {
+                responseType: "blob", // Mengatur tipe respons sebagai blob
+            });
+            console.log("respon",response);
+    
+            // Membuat objek blob dari respons data
+            const blob = new Blob([response.data], { type: "application/pdf" });
+    
+            // Membuat objek URL untuk blob
+            //const url = URL.createObjectURL(blob);
+            const url = window.URL.createObjectURL(blob);
+    
+            // Membuat elemen <a> untuk mengunduh file
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `catatan_belajar_${catatan.id}.pdf`);
+    
+            // Menambahkan elemen <a> ke dalam body
+            document.body.appendChild(link);
+    
+            // Klik pada elemen <a> untuk memulai unduhan
+            link.click();
+    
+            // Menghapus elemen <a> dari DOM setelah selesai digunakan
+            //if (link.parentNode) {
+            //    link.parentNode.removeChild(link);
+            // }
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url)
+        } catch (error) {
+            console.error("Gagal mengunduh catatan belajar:", error);
+            // Tindakan jika gagal mengunduh catatan belajar
+        }
+    };
+    
+    
+    // Buat elemen placeholder untuk menjaga ukuran card tetap konstan
+    const placeholder = Array.from({ length: MAX_LENGTH - catatan.isi_catatan.length }).map((_, index) => (
+        <span key={index} className="invisible">
+            x
+        </span>
+    ));
+
+    return (
+        <Card className="w-[300px]">
+            <CardHeader>
+                <CardTitle className="text-left text-lg font-bold flex justify-between">
+                    {catatan.judul_catatan}
+                    <FontAwesomeIcon icon={faLock} className="text-[#39B0AA]" />
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="grid w-full items-center gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                        <Label htmlFor="name" className="text-left font-normal overflow-hidden h-[50px]">
+                            {truncatedIsi}
+                            {placeholder}
+                        </Label>
+                    </div>
+                    <div className="flex flex-col md:flex-row items-center">
+                        <Avatar>
+                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                            <AvatarFallback>CN</AvatarFallback>
+                        </Avatar>
+                        <Label className="text-sm font-medium ml-2">Nama si User</Label>
+                    </div>
+                </div>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+                <Badge className="bg-[#F9A682] text-[#B23E19] hover:bg-[#F9A682] hover:text-[#B23E19] rounded-md">ini tag</Badge>
+                <div>
+                    <Button className="w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]" variant="ghost" onClick={() => toggleNotepad("PUT", catatan)}>
+                        <FontAwesomeIcon icon={faPenToSquare} color="#38B0AB" />
+                    </Button>
+                    <Button
+                        className="mx-1 w-6 h-6 p-0 text-xs border-2 border-[#E7EAE9]"
+                        variant="ghost"
+                        onClick={handleDownload} // Menambahkan handleDownload saat tombol download ditekan
+                    >
+                        <FontAwesomeIcon icon={faFileArrowDown} color="#38B0AB" />
+                    </Button>
+                </div>
+            </CardFooter>
+        </Card>
+    );
 };
 
 export default CardCatatan;
