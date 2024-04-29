@@ -15,7 +15,7 @@ function App() {
   const [method, setMethod] = useState<MethodType>("POST");
   const [catatanBelajar, setCatatanBelajar] = useState<CatatanData[]>([]);
   const [catatanData, setCatatanData] = useState<CatatanData>();
-  const [loggedInAccountId] = useState(3);
+  const [loggedInAccountId] = useState(2);
   const toggleNotepad = (
     newMethod?: MethodType,
     newCatatanData?: CatatanData
