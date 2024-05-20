@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Label } from "../ui/label";
@@ -28,6 +29,8 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
   onSubmit,
   method,
 }) => {
+  const { toast } = useToast(); 
+
   const {
     id: id_catatan,
     judul_catatan,
@@ -153,11 +156,16 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
 
       setIsLoading(false);
       onSubmit(true);
+
+      toast({
+        description: method === "POST" ? "Catatan berhasil disimpan." : "Catatan berhasil diperbarui.", duration: 1000
+      });
     } catch (error) {
       console.error("Error creating or updating catatan:", error);
       alert("Failed to create or update catatan. Please try again.");
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="mt-4">
@@ -298,7 +306,7 @@ const FormCatatan: React.FC<FormCatatanProps> = ({
             <Button
               type="submit"
               className={`bg-[#38B0AB] hover:bg-[#22918D] text-white ml-2 `}
-              disabled={isLoading}
+              disabled={isLoading || !isJudulValid || !isIsiValid}
             >
               {isLoading ? (
                 <div className="flex items-center">

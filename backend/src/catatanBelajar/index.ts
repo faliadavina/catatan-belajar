@@ -270,35 +270,40 @@ router.get('/catatanBelajar/:id/download', async (req, res) => {
     const yPos = doc.y;
 
     // Download and add image to PDF
-    const imagePath = `./public/tempImages/temp_image_${catatanId}.jpg`;
-    const writer = fs.createWriteStream(imagePath);
-    const response = await axios({
-        url: catatanBelajar.gambar,
-        method: 'GET',
-        responseType: 'stream'
-    });
+    if (catatanBelajar.gambar) {
+        const imagePath = `./public/tempImages/temp_image_${catatanId}.jpg`;
+        const writer = fs.createWriteStream(imagePath);
+        const response = await axios({
+            url: catatanBelajar.gambar,
+            method: 'GET',
+            responseType: 'stream'
+        });
 
-    response.data.pipe(writer);
+        response.data.pipe(writer);
 
-    writer.on('finish', () => {
-        // Calculate x position to center the image
-        const imageWidth = 200; // Adjust this value based on your image size
-        const xPos = (doc.page.width - imageWidth) / 2;
-        
-        // Move to the calculated position
-        doc.y = yPos + 20; // Add some padding
-        doc.image(imagePath, xPos, doc.y, { width: imageWidth });
+        writer.on('finish', () => {
+            // Calculate x position to center the image
+            const imageWidth = 200; // Adjust this value based on your image size
+            const xPos = (doc.page.width - imageWidth) / 2;
 
+            // Move to the calculated position
+            doc.y = yPos + 20; // Add some padding
+            doc.image(imagePath, xPos, doc.y, { width: imageWidth });
+
+            doc.end();
+            res.sendFile(pdfPath);
+        });
+
+        writer.on('error', (err) => {
+            console.error('Failed to download image:', err);
+            res.status(500).send('Failed to download image');
+        });
+    } else {
         doc.end();
         res.sendFile(pdfPath);
-    });
-
-    writer.on('error', (err) => {
-        console.error('Failed to download image:', err);
-        res.status(500).send('Failed to download image');
-    });
-
+    }
 });
+
 
 
 export default router;

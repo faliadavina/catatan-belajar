@@ -3,6 +3,7 @@ import "./App.css";
 import CardCatatan from "./components/custom/CardCatatan";
 import Notepad from "./components/custom/Notepad";
 import { Button } from "./components/ui/button";
+import { Toaster } from "./components/ui/toaster"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Input } from "./components/ui/input";
 import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -122,6 +123,7 @@ function App() {
           catatanData={catatanData}
         />
       </div>
+      <Toaster />
     </div>
   );
 }
